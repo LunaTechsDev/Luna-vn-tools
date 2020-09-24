@@ -24,22 +24,18 @@
 # Note you can call an hxml file inside an hxml file for build purposes.
 # For Compiling Separate JavaScript Files
 
---macro macros.MacroTools.includeJsLib("./src/Params.js")
+# --macro macros.MacroTools.includeJsLib("./src/Params.js")
 
--main Main
+
 --each
 
 --next
--js dist/Luna_CallEvent.js
---next
--js ../games/LunaTechsMZ/js/plugins/Luna_CallEvent.js
+lunalog.hxml
+# --next
+# -js ../games/LunaTechsMZ/js/plugins/Luna_CallEvent.js
 
 --next 
--D compileMV
--js dist/Luna_CallEventMV.js
---next
--D compileMV
--js ../games/LunaTechsMZ/js/plugins/Luna_CallEventMV.js
+lunavnsave.hxml
 
 
 --cmd haxe -D gamePath=../games/LunaTechsMZ --run CleanJs

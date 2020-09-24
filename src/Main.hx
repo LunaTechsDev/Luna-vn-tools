@@ -33,11 +33,6 @@ class Main {
     Params ={}
 
     trace(Params);
-
-    Comment.title('Scene_Map');
-
-    Comment.title('Game_Interpreter');
-    FnMacros.jsPatch(true, Game_Interpreter, GameInter);
   }
 
   public static function params() {

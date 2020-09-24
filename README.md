@@ -1,3 +1,3 @@
-# Luna Call Event 
+# Luna Visual Novel Tools 
 ### Author LunaTechs - Kino
-> An RPGMakerMV/MZ plugin that allows you to call an event from any map in your game.
+> A collection of plugins that allow you to create Visual novels in RPGMakerMV/MZ.

@@ -1,0 +1,19 @@
+
+-lib LunaTea
+
+-cp src
+--main log.Main
+
+
+--macro macros.MacroTools.includeJsLib("./src/log/Params.js")
+
+--each
+--next
+-js dist/Luna_Log.js
+
+--next
+-D compileMV
+-js dist/Luna_LogMV.js
+
+
+

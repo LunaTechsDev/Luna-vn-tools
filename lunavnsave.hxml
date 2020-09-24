@@ -1,0 +1,18 @@
+
+-lib LunaTea
+-cp src
+
+--main save.Main
+
+
+--macro macros.MacroTools.includeJsLib("./src/save/Params.js")
+
+--each
+--next
+-js dist/Luna_Save.js
+
+--next
+-D compileMV
+-js dist/Luna_SaveMV.js
+
+
