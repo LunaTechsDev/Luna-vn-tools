@@ -1,12 +1,38 @@
 /*:
 @author LunaTechs - Kino
-@plugindesc > A collection of plugins that allow you to create Visual novels in RPGMakerMV/MZ <LunaVnTools>
+@plugindesc > A collection of plugins that allow you to create Visual novels in RPGMakerMV/MZ <LunaVNSave>.
 
 @target MV MZ
 
 @command callEvent
 @text Call Event
 @desc Allows you to call an event from any map with any event ID
+
+
+@param x
+@text X Position 
+@desc The x position in relation to the message window
+@default 0
+
+@param y 
+@text Y Position
+@desc The y position in relation to the message window
+@default 0
+
+@param width
+@text Width
+@desc The width of the save log window
+@default 100
+
+@param height
+@text Height
+@desc The height of the save log window
+@default 75
+
+@param saveText
+@text Save Text
+@desc The save text shown in the save window
+@default Save
 
 
 @help

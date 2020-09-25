@@ -1,16 +1,5 @@
-import macros.FnMacros;
-import rm.scenes.Scene_Map;
-import js.Syntax;
-import rm.windows.Window_Base;
-import rm.managers.DataManager;
-import rm.core.Rectangle;
-import rm.windows.Window_MapName;
-import rm.objects.Game_Interpreter;
 import pixi.interaction.EventEmitter;
 import core.Amaryllis;
-import utils.Comment;
-import core.Types.JsFn;
-import utils.Fn;
 import rm.Globals;
 
 using Lambda;
@@ -38,9 +27,4 @@ class Main {
   public static function params() {
     return Params;
   }
-
-  // public static inline function callEvent(mapId: Int, eventId: Int) {
-  //   // Globals.DataMapInfos[mapId].
-  //   Globals.DataMap.events[eventId].pages;
-  // }
 }

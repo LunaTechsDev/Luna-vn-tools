@@ -1,5 +1,5 @@
 -lib LunaTea
-
+-lib hxnodejs
 
 -cp src
 # JS Version 
@@ -27,15 +27,9 @@
 
 # --macro macros.MacroTools.includeJsLib("./src/Params.js")
 
-# --main Main
+--main Main
+
 --each
-
 --next
-lunalog.hxml
-
---next 
-lunavnsave.hxml
-
-
---cmd haxe -D gamePath=../games/LunaTechsMZ --run CleanJs
-
+--no-output
+-js dummy.js
