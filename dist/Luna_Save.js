@@ -2,7 +2,7 @@
 // Luna_Save.js
 //=============================================================================
 //=============================================================================
-// Build Date: 2020-09-24 21:10:09
+// Build Date: 2020-09-24 21:26:17
 //=============================================================================
 //=============================================================================
 // Made with LunaTea -- Haxe
@@ -87,6 +87,17 @@ class EReg {
 		return this.r.m != null;
 	}
 }
+class WindowExtensions {
+	static isTouchedInsideFrame(win) {
+		let x = win.canvasToLocalX(TouchInput.x)
+		let y = win.canvasToLocalY(TouchInput.y)
+		if(x >= 0 && y >= 0 && x < win.width) {
+			return y < win.height;
+		} else {
+			return false;
+		}
+	}
+}
 class haxe_iterators_ArrayIterator {
 	constructor(array) {
 		this.current = 0
@@ -133,6 +144,11 @@ class LunaVNSave {
 			let info = LunaVNSave.Params
 			this._saveWindow = new save_VNSaveWindow(info.x,info.y,info.width,info.height)
 			this._saveWindow.setSaveText(info.saveText)
+			this._saveWindow.setupEvents(function(win) {
+				win.on("gotoSaveScene",function() {
+					SceneManager.push(Scene_Save)
+				})
+			})
 			this.addWindow(this._saveWindow)
 		}
 	}
@@ -149,6 +165,11 @@ class save_MapPatch extends Scene_Map {
 		let info = LunaVNSave.Params
 		this._saveWindow = new save_VNSaveWindow(info.x,info.y,info.width,info.height)
 		this._saveWindow.setSaveText(info.saveText)
+		this._saveWindow.setupEvents(function(win) {
+			win.on("gotoSaveScene",function() {
+				SceneManager.push(Scene_Save)
+			})
+		})
 		this.addWindow(this._saveWindow)
 	}
 }
@@ -156,6 +177,28 @@ class save_VNSaveWindow extends Window_Base {
 	constructor(x,y,width,height) {
 		super(new Rectangle(x,y,width,height));
 		this._saveText = ""
+	}
+	setupEvents(fn) {
+		fn(this)
+	}
+	update() {
+		_Window_Base_update.call(this)
+		this.refresh()
+		this.processClick()
+	}
+	processClick() {
+		if(WindowExtensions.isTouchedInsideFrame(this)) {
+			this.emit("gotoSaveScene")
+		}
+	}
+	refresh() {
+		if(this.contents != null) {
+			this.contents.clear()
+			this.paintSaveText()
+		}
+	}
+	paintSaveText() {
+		this.drawText(this._saveText,0,0,this.contentsWidth(),"center")
 	}
 	setSaveText(text) {
 		this._saveText = text
