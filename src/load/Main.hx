@@ -4,6 +4,7 @@ import macros.FnMacros;
 import utils.Comment;
 import utils.Fn;
 import rm.Globals;
+import rm.scenes.Scene_Map;
 
 typedef VNParams = {
   var x: Int;

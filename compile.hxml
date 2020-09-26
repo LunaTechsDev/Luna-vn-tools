@@ -36,6 +36,8 @@ lunalog.hxml
 --next 
 lunavnsave.hxml
 
+--next
+lunavnload.hxml
 
 --cmd haxe -D gamePath=../games/LunaTechsMZ --run CleanJs
 
