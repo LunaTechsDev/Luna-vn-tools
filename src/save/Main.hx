@@ -11,6 +11,7 @@ typedef VNParams = {
   var y: Int;
   var width: Int;
   var height: Int;
+  var backgroundType: Int;
   var saveText: String;
 }
 
@@ -26,6 +27,7 @@ class Main {
       y: Fn.parseIntJs(params['y']),
       width: Fn.parseIntJs(params['width']),
       height: Fn.parseIntJs(params['height']),
+      backgroundType: Fn.parseIntJs(params['backgroundType']),
       saveText: params['saveText']
     }
 

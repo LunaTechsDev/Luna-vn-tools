@@ -17,6 +17,7 @@ class VNLoadWindow extends Window_Base {
     super(rect);
     #end
     this._loadText = '';
+    this.setBackgroundType(Main.Params.backgroundType);
     // Setup for button mode and clicking
   }
 

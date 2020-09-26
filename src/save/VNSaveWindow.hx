@@ -17,6 +17,7 @@ class VNSaveWindow extends Window_Base {
     super(rect);
     #end
     this._saveText = '';
+    this.setBackgroundType(Main.Params.backgroundType);
     // Setup for button mode and clicking
   }
 

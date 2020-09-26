@@ -24,6 +24,11 @@
 @desc The height of the load window
 @default 75
 
+@param backgroundType
+@text Background Type 
+@desc The background type of the window 0, 1, 2 (full opacity, semi-transparent, transparent).
+@default 0
+
 @param saveText
 @text Save Text
 @desc The save text shown in the save window
