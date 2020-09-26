@@ -5,6 +5,8 @@ import rm.managers.SceneManager;
 import save.Types.SaveEvents;
 import rm.scenes.Scene_Map;
 
+using WindowExtensions;
+
 class MapPatch extends Scene_Map {
   var _saveWindow: VNSaveWindow;
 
@@ -24,5 +26,21 @@ class MapPatch extends Scene_Map {
       });
     });
     this.addWindow(this._saveWindow);
+  }
+
+  public override function update() {
+    // super.update();
+    untyped _Scene_Map_update.call(this);
+    this.processVNSaveWindowVisibility();
+  }
+
+  public function processVNSaveWindowVisibility() {
+    if (this._messageWindow.isOpenOrVisible() && !this._saveWindow.isOpenOrVisible()) {
+      this._saveWindow.show();
+      this._saveWindow.open();
+    } else {
+      this._saveWindow.close();
+      this._saveWindow.hide();
+    }
   }
 }

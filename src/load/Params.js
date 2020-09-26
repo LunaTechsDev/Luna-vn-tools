@@ -1,8 +1,13 @@
 /*:
 @author LunaTechs - Kino
-@plugindesc > A plugin that allows you to save your game VN style. <LunaVNSave>.
+@plugindesc > A VN plugin that adds a load scene button to your game <LunaVNLoad>.
 
 @target MV MZ
+
+@command callEvent
+@text Call Event
+@desc Allows you to call an event from any map with any event ID
+
 
 @param x
 @text X Position 
@@ -16,7 +21,7 @@
 
 @param width
 @text Width
-@desc The width of the load  window
+@desc The width of the load window
 @default 100
 
 @param height
@@ -24,9 +29,9 @@
 @desc The height of the load window
 @default 75
 
-@param saveText
-@text Save Text
-@desc The save text shown in the save window
+@param loadText
+@text Load Text
+@desc The save text shown in the load window
 @default Save
 
 

@@ -7,4 +7,8 @@ class WindowExtensions {
     var y = win.canvasToLocalY(TouchInput.y);
     return x >= 0 && y >= 0 && x < win.width && y < win.height;
   }
+
+  public static function isOpenOrVisible(win: Window_Base) {
+    return win.isOpen() || win.visible;
+  }
 }
