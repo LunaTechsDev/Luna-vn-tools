@@ -40,15 +40,15 @@ class VNLoadWindow extends Window_Base {
   public function refresh() {
     if (this.contents != null) {
       this.contents.clear();
-      this.paintSaveText();
+      this.paintLoadText();
     }
   }
 
-  public function paintSaveText() {
+  public function paintLoadText() {
     this.drawText(this._loadText, 0, 0, this.contentsWidth(), 'center');
   }
 
-  public function setSaveText(text: String) {
+  public function setLoadText(text: String) {
     this._loadText = text;
   }
 }

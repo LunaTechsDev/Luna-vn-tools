@@ -19,7 +19,7 @@ class MapPatch extends Scene_Map {
     // Parameter
     var info = Main.Params;
     this._loadWindow = new VNLoadWindow(info.x, info.y, info.width, info.height);
-    this._loadWindow.setSaveText(info.loadText);
+    this._loadWindow.setLoadText(info.loadText);
     this._loadWindow.setupEvents((win) -> {
       win.on(SaveEvents.GOTO, () -> {
         SceneManager.push(Scene_Load);
