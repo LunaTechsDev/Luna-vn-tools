@@ -22,6 +22,9 @@ enum abstract VNSysEvents(String) from String to String {
   public var MOVEBUSTBY = 'moveBustBy';
   public var HIDEBUST = 'hideBust';
   public var SHOWBUST = 'showBust';
+  public var FADEBUSTTO = 'fadeToBust';
+  public var FADEBUSTBY = 'fadeByBust';
+  public var SCALEBUSTTO = 'scaleTo';
   public var EMOTEBUST = 'emoteBust';
 
   /**

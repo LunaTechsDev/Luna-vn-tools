@@ -69,7 +69,7 @@ class SpriteBust extends Sprite_Base {
     this._fadeDuration = duration;
   }
 
-  public function scaleTo(x: Int, ?y: Int, ?duration: Int = 30) {
+  public function scaleTo(x: Float, ?y: Float, ?duration: Int = 30) {
     this.scale.set(x, y);
     this._scaleDuration = duration;
   }

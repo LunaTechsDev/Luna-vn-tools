@@ -23,7 +23,6 @@ class Scene_Map extends RmScene_Map {
 
   public function addBustsToMessageWindow() {
     // Adds all necessary busts to the message window
-
     for (index in 0...Main.Params.bustLimit) {
       var bust = new SpriteBust(0, 0); // add Optional bitmap later
       setupBustEvents(bust);
@@ -51,6 +50,21 @@ class Scene_Map extends RmScene_Map {
     Main.listener.on(VNSysEvents.MOVEBUSTBY, (id: Int, x: Int, y: Int) -> {
       var bust = this.bust(id);
       bust.moveBy(x, y);
+    });
+
+    Main.listener.on(VNSysEvents.FADEBUSTTO, (id: Int, opacity: Int, duration: Int) -> {
+      var bust = this.bust(id);
+      bust.fadeTo(opacity, duration);
+    });
+
+    Main.listener.on(VNSysEvents.FADEBUSTBY, (id: Int, opacity: Int, duration: Int) -> {
+      var bust = this.bust(id);
+      bust.fadeBy(opacity, duration);
+    });
+
+    Main.listener.on(VNSysEvents.SCALEBUSTTO, (id: Int, x: Float, y: Float, duration: Int) -> {
+      var bust = this.bust(id);
+      bust.scaleTo(x, y, duration);
     });
   }
 
