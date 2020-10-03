@@ -1,5 +1,6 @@
 package visnov.sprites;
 
+import rm.managers.ImageManager;
 import rm.core.Bitmap;
 import rm.sprites.Sprite_Base;
 import core.Amaryllis;
@@ -23,11 +24,24 @@ class SpriteBust extends Sprite_Base {
 
   public function new(x: Int, y: Int, ?bitmap: Bitmap) {
     super();
-    this.bitmap = bitmap;
-    trace(bitmap);
+    if (bitmap != null) {
+      this.bitmap = bitmap;
+      handleLoading(this.bitmap);
+    }
     this.x = x;
     this.y = y;
     this._moveWait = 30;
+  }
+
+  public function setBust(bustSetName: String) {
+    this.bitmap = ImageManager.loadPicture(bustSetName, 0);
+  }
+
+  public function handleLoading(bitmap: Bitmap) {
+    bitmap.addLoadListener((bitmap) -> {
+      trace('Loaded Sprite Bust');
+      this.show();
+    });
   }
 
   override public function initialize(): Void {
