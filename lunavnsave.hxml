@@ -20,10 +20,10 @@
 
 --each
 --next
--js dist/Luna_Save.js
+-js dist/Luna_VNSave.js
 
 --next
 -D compileMV
--js dist/Luna_SaveMV.js
+-js dist/Luna_VNSaveMV.js
 
 
