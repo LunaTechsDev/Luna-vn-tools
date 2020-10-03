@@ -42,16 +42,20 @@ class SpriteBust extends Sprite_Base {
   // TODO: Replace with proper Some/None
   public function moveTo(x: Int, ?y: Int) {
     this._shadowX = x;
-    if (y != null)
+    if (y != null) {
       this._shadowY = y;
+    }
+
     this._moveWait = 30;
-    trace("Starting Move", this._moveWait);
+    trace('Starting Move', this._moveWait);
   }
 
   public function moveBy(x: Int, ?y: Int) {
     this._shadowX += x;
-    if (y != null)
+    if (y != null) {
       this._shadowY += y;
+    }
+
     this._moveWait = 30;
   }
 
@@ -120,5 +124,11 @@ class SpriteBust extends Sprite_Base {
     this.move(xResult, yResult);
     trace('Moving', this.x, this.y);
     this._refresh();
+  }
+
+  public function oscillateSize() {
+    var xYResult = Math.abs(Math.sin(Date.now().getTime() / 1000) / 2.0);
+    this.scale.x = 1 - xYResult;
+    this.scale.y = 1 - xYResult;
   }
 }

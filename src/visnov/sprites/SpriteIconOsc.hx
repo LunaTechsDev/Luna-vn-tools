@@ -8,6 +8,7 @@ import rm.sprites.Sprite_Base;
  */
 @:keep
 @:native('LVNSpriteIconOsc')
+@:expose('LVNSpriteIconOsc')
 class LTSpriteIconOsc extends Sprite_Base {
   public function new(x: Int, y: Int, ?bitmap: Bitmap) {
     super();
