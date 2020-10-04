@@ -35,6 +35,7 @@ class SpriteBust extends Sprite_Base {
 
   public function setBust(bustSetName: String) {
     this.bitmap = ImageManager.loadPicture(bustSetName, 0);
+    handleLoading(this.bitmap);
   }
 
   public function handleLoading(bitmap: Bitmap) {

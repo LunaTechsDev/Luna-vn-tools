@@ -66,6 +66,11 @@ class Scene_Map extends RmScene_Map {
       var bust = this.bust(id);
       bust.scaleTo(x, y, duration);
     });
+
+    Main.listener.on(VNSysEvents.SETBUST, (id: Int, bustSetName: String) -> {
+      var bust = this.bust(id);
+      bust.setBust(bustSetName);
+    });
   }
 
   public function bust(Id: Int) {
