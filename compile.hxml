@@ -42,5 +42,6 @@ lunavnsave.hxml
 --next
 lunavnload.hxml
 
+--cmd 'npx napkin'
 --cmd haxe -D gamePath=../games/LunaTechsMZ --run CleanJs
 
