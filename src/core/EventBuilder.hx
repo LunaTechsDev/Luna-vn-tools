@@ -1,5 +1,6 @@
 package core;
 
+import core.Types.EventCode;
 import rm.types.RPG.EventCommand;
 
 class EventBuilder {
@@ -12,6 +13,7 @@ class EventBuilder {
   }
 
   public function showText() {
+    var command = null;
     // var command: EventCommand ={};
   }
 
