@@ -1,5 +1,27 @@
 package core;
 
+enum abstract TimerCode(Int) from Int to Int {
+  public var START = 0;
+  public var STOP = 1;
+}
+
+enum abstract MemberAddRemove(Int) from Int to Int {
+  public var ADD = 0;
+  public var REMOVE = 1;
+}
+
+enum abstract WinBackground(Int) from Int to Int {
+  public var OPAQUE = 0;
+  public var DIM = 1;
+  public var TRANSPARENT = 2;
+}
+
+enum abstract WinPosition(Int) from Int to Int {
+  public var TOP = 0;
+  public var MIDDLE = 1;
+  public var BOTTOM = 2;
+}
+
 enum abstract EventCode(Int) from Int to Int {
   public var END = 0;
   public var SHOWTEXT = 101;
