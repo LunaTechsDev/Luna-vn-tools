@@ -1,6 +1,6 @@
 package core;
 
-enum abstract TimerCode(Int) from Int to Int {
+enum abstract TimerCodes(Int) from Int to Int {
   public var START = 0;
   public var STOP = 1;
 }

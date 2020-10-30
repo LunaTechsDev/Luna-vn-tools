@@ -4,9 +4,12 @@ import core.Types;
 import rm.types.RPG.EventCommand;
 
 using StringTools;
+using Lambda;
 
+@:native('EventBuilder')
 class EventBuilder {
   public var _commands: Array<EventCommand> = [];
+  public var _currentIndentLvl = 0;
 
   public function new() {}
 
@@ -18,17 +21,25 @@ class EventBuilder {
     var params: Array<Any> = [text, background, position];
     this._commands.push({
       code: SHOWTEXT,
-      indent: 0,
+      indent: this._currentIndentLvl,
       parameters: params
     });
 
     return this;
   }
 
+  public function controlTimer(startStop: TimerCodes, seconds: Int) {
+    this._commands.push({
+      code: CNTRLTIMER,
+      indent: this._currentIndentLvl,
+      parameters: [startStop, seconds]
+    });
+  }
+
   public function nameInput(actorId: Int, characterLength: Int) {
     this._commands.push({
       code: NAMEINPUT,
-      indent: 0,
+      indent: this._currentIndentLvl,
       parameters: [actorId, characterLength]
     });
 
@@ -48,7 +59,7 @@ class EventBuilder {
   public function changePartyMember(actorId: Int, addRemove: MemberAddRemove) {
     this._commands.push({
       code: CHANGEPARTYMEM,
-      indent: 0,
+      indent: this._currentIndentLvl,
       parameters: [actorId, addRemove]
     });
     return this;
@@ -57,7 +68,7 @@ class EventBuilder {
   public function openSave() {
     this._commands.push({
       code: OPENSAVE,
-      indent: 0,
+      indent: this._currentIndentLvl,
       parameters: []
     });
     return this;
@@ -66,7 +77,7 @@ class EventBuilder {
   public function openMenu() {
     this._commands.push({
       code: OPENMENU,
-      indent: 0,
+      indent: this._currentIndentLvl,
       parameters: []
     });
     return this;
@@ -75,7 +86,7 @@ class EventBuilder {
   public function gameOver() {
     this._commands.push({
       code: GAMEOVER,
-      indent: 0,
+      indent: this._currentIndentLvl,
       parameters: []
     });
   }
@@ -83,7 +94,7 @@ class EventBuilder {
   public function ToTitle() {
     this._commands.push({
       code: TOTITLE,
-      indent: 0,
+      indent: this._currentIndentLvl,
       parameters: []
     });
 
@@ -94,7 +105,7 @@ class EventBuilder {
     var params = [script.trim()];
     this._commands.push({
       code: SCRIPT,
-      indent: 0,
+      indent: this._currentIndentLvl,
       parameters: params
     });
     return this;
