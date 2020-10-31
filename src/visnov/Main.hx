@@ -149,4 +149,28 @@ class Main {
   }
 
   public static function setBust(id: Int, bustSetName: String) {}
+
+  public static function setBackdrop(imageName: String) {
+    listener.emit(VNSysEvents.SETBACKDROP, imageName);
+  }
+
+  public static function showBackdrop() {
+    listener.emit(VNSysEvents.SHOWBACKDROP);
+  }
+
+  public static function hideBackdrop() {
+    listener.emit(VNSysEvents.HIDEBACKDROP);
+  }
+
+  public static function setScreenPic(imageName: String) {
+    listener.emit(VNSysEvents.SETSCREENPIC, imageName);
+  }
+
+  public static function showScreenPic() {
+    listener.emit(VNSysEvents.SHOWSCREENPIC);
+  }
+
+  public static function hideScreenPic() {
+    listener.emit(VNSysEvents.HIDESCREENPIC);
+  }
 }

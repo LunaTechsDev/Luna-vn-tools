@@ -104,6 +104,9 @@ class Scene_Map extends RmScene_Map {
   }
 
   public function setupBackdropEvents() {
+    Main.listener.on(VNSysEvents.SETBACKDROP, (imageName: String) -> {
+      this.setBackdrop(imageName);
+    });
     Main.listener.on(VNSysEvents.SHOWBACKDROP, () -> {
       // Start Fade In
       this._shadowBackdropOpacity = 255;
@@ -116,11 +119,14 @@ class Scene_Map extends RmScene_Map {
   }
 
   public function setupScreenPicEvents() {
+    Main.listener.on(VNSysEvents.SETSCREENPIC, (imageName: String) -> {
+      this.setScreenPicture(imageName);
+    });
+
     Main.listener.on(VNSysEvents.SHOWSCREENPIC, () -> {
       // Start Fade In
       this._shadowScreenPicOpacity = 255;
     });
-
     Main.listener.on(VNSysEvents.HIDESCREENPIC, () -> {
       // Fade Out
       this._shadowScreenPicOpacity = 0;
@@ -158,7 +164,26 @@ class Scene_Map extends RmScene_Map {
     this.updateScreenSprite();
   }
 
-  public function updateBackdrop() {}
+  public function updateBackdrop() {
+    var opacityResult = this._lvnBackdropSprite.opacity;
+    if (this._shadowBackdropOpacity != this._lvnBackdropSprite.opacity) {
+      opacityResult = Amaryllis.lerp(this._lvnBackdropSprite.opacity, this._shadowBackdropOpacity, 0.045);
+    }
+    if (Math.abs(this._shadowBackdropOpacity - this._lvnBackdropSprite.opacity) < 0.5) {
+      opacityResult = Math.round(opacityResult);
+    }
+    this._lvnBackdropSprite.opacity = opacityResult;
+  }
 
-  public function updateScreenSprite() {}
+  public function updateScreenSprite() {
+    var opacityResult = this._lvnScreenPicSprite.opacity;
+    if (this._shadowScreenPicOpacity != this._lvnScreenPicSprite.opacity) {
+      opacityResult = Amaryllis.lerp(this._lvnScreenPicSprite.opacity, this._shadowScreenPicOpacity, 0.045);
+    }
+
+    if (Math.abs(this._shadowScreenPicOpacity - this._lvnScreenPicSprite.opacity) < 0.5) {
+      opacityResult = Math.round(opacityResult);
+    }
+    this._lvnScreenPicSprite.opacity = opacityResult;
+  }
 }
