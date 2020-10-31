@@ -6,9 +6,11 @@ import rm.types.RPG.EventCommand;
 using StringTools;
 using Lambda;
 
+// TODO: Combine Event Functionality
 @:native('EventBuilder')
 class EventBuilder {
   public var _commands: Array<EventCommand> = [];
+  public var _metadata: Map<String, Dynamic> = new Map<String, Dynamic>();
   public var _currentIndentLvl = 0;
 
   public function new() {}
@@ -17,7 +19,7 @@ class EventBuilder {
     return new EventBuilder();
   }
 
-  public function showText(text: String, background: WinBackground, position: WinPosition) {
+  public function showText(text: String, background: WinBackground = OPAQUE, position: WinPosition = BOTTOM) {
     var params: Array<Any> = [text, background, position];
     this._commands.push({
       code: SHOWTEXT,
@@ -46,6 +48,74 @@ class EventBuilder {
     return this;
   }
 
+  public function changeGoldDir(amount: Int) {
+    return this.changeGold(ChangeType.DIRECT, amount);
+  }
+
+  public function changeGoldVar(variableId: Int) {
+    return this.changeGold(ChangeType.VARIABLE, variableId);
+  }
+
+  public function changeGold(changeType: ChangeType, amount: Int) {
+    this._commands.push({
+      code: CHANGEGOLD,
+      indent: this._currentIndentLvl,
+      parameters: [this.operationSign(amount), changeType, amount]
+    });
+    return this;
+  }
+
+  public function changeItemDir(itemId: Int, amount: Int) {
+    return this.changeItems(itemId, ChangeType.DIRECT, amount);
+  }
+
+  public function changeItemVar(variableId: Int, amount: Int) {
+    return this.changeItems(variableId, ChangeType.VARIABLE, amount);
+  }
+
+  public function changeItems(itemVarId: Int, changeType: ChangeType, amount: Int) {
+    this._commands.push({
+      code: CHANGEITEMS,
+      indent: this._currentIndentLvl,
+      parameters: [itemVarId, this.operationSign(amount), changeType, amount]
+    });
+    return this;
+  }
+
+  public function changeWepDir(itemId: Int, amount: Int, includeEqp: Bool = false) {
+    return this.changeWep(itemId, ChangeType.DIRECT, amount, includeEqp);
+  }
+
+  public function changeWepVar(variableId: Int, amount: Int, includeEqp: Bool = false) {
+    return this.changeWep(variableId, ChangeType.VARIABLE, amount, includeEqp);
+  }
+
+  public function changeWep(itemVarId: Int, changeType: ChangeType, amount: Int, includeEqp: Bool = false) {
+    this._commands.push({
+      code: CHANGEWEP,
+      indent: this._currentIndentLvl,
+      parameters: [itemVarId, this.operationSign(amount), changeType, amount, includeEqp]
+    });
+    return this;
+  }
+
+  public function changeArmorDir(itemId: Int, amount: Int, includeEqp: Bool = false) {
+    return this.changeArmor(itemId, ChangeType.DIRECT, amount, includeEqp);
+  }
+
+  public function changeArmorVar(variableId: Int, amount: Int, includeEqp: Bool = false) {
+    return this.changeArmor(variableId, ChangeType.VARIABLE, amount, includeEqp);
+  }
+
+  public function changeArmor(itemVarId: Int, changeType: ChangeType, amount: Int, includeEqp: Bool = false) {
+    this._commands.push({
+      code: CHANGEARMOR,
+      indent: this._currentIndentLvl,
+      parameters: [itemVarId, this.operationSign(amount), changeType, amount, includeEqp]
+    });
+    return this;
+  }
+
   public function addPartyMember(actorId: Int) {
     this.changePartyMember(actorId, MemberAddRemove.ADD);
     return this;
@@ -61,6 +131,78 @@ class EventBuilder {
       code: CHANGEPARTYMEM,
       indent: this._currentIndentLvl,
       parameters: [actorId, addRemove]
+    });
+    return this;
+  }
+
+  public function changeWindowColor(red: Int, green: Int, blue: Int, alpha: Int = 1) {
+    this._commands.push({
+      code: CHANGEWINCOLOR,
+      indent: this._currentIndentLvl,
+      parameters: [red, green, blue, alpha]
+    });
+    return this;
+  }
+
+  public function changeBattleBgm(name: String, volume: Int = 100, pitch: Int = 100, pan: Int = 0) {
+    this._commands.push({
+      code: CHANGEBATTLEBGM,
+      indent: this._currentIndentLvl,
+      parameters: [name, volume, pitch, pan]
+    });
+    return this;
+  }
+
+  public function changeVictoryMe(name: String, volume: Int = 100, pitch: Int = 100, pan: Int = 0) {
+    this._commands.push({
+      code: CHANGEVICTORYME,
+      indent: this._currentIndentLvl,
+      parameters: [name, volume, pitch, pan]
+    });
+    return this;
+  }
+
+  public function changeDefeatMe(name: String, volume: Int = 100, pitch: Int = 100, pan: Int = 0) {
+    this._commands.push({
+      code: CHANGEDEFEATME,
+      indent: this._currentIndentLvl,
+      parameters: [name, volume, pitch, pan]
+    });
+    return this;
+  }
+
+  public function playBgm(name: String, volume: Int = 100, pitch: Int = 100, pan: Int = 0) {
+    this._commands.push({
+      code: PLAYBGM,
+      indent: this._currentIndentLvl,
+      parameters: [name, volume, pitch, pan]
+    });
+    return this;
+  }
+
+  public function playMe(name: String, volume: Int = 100, pitch: Int = 100, pan: Int = 0) {
+    this._commands.push({
+      code: PLAYME,
+      indent: this._currentIndentLvl,
+      parameters: [name, volume, pitch, pan]
+    });
+    return this;
+  }
+
+  public function playSe(name: String, volume: Int = 100, pitch: Int = 100, pan: Int = 0) {
+    this._commands.push({
+      code: PLAYSE,
+      indent: this._currentIndentLvl,
+      parameters: [name, volume, pitch, pan]
+    });
+    return this;
+  }
+
+  public function stopSe() {
+    this._commands.push({
+      code: STOPSE,
+      indent: this._currentIndentLvl,
+      parameters: []
     });
     return this;
   }
@@ -101,6 +243,15 @@ class EventBuilder {
     return this;
   }
 
+  public function abortBattle() {
+    this._commands.push({
+      code: ABORTBATTLE,
+      indent: this._currentIndentLvl,
+      parameters: []
+    });
+    return this;
+  }
+
   public function script(script: String, indent: Int) {
     var params = [script.trim()];
     this._commands.push({
@@ -113,5 +264,22 @@ class EventBuilder {
 
   public function commands() {
     return this._commands;
+  }
+
+  public function metadata() {
+    return this._metadata;
+  }
+
+  public function addMetadata(key: String, value: Dynamic) {
+    this._metadata.set(key, value);
+    return this;
+  }
+
+  public function getMetadata(key: String) {
+    return this._metadata.get(key);
+  }
+
+  public function operationSign(value: Float) {
+    return value > 0 ? 0 : 1;
   }
 }

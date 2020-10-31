@@ -22,6 +22,11 @@ enum abstract WinPosition(Int) from Int to Int {
   public var BOTTOM = 2;
 }
 
+enum abstract ChangeType(Int) from Int to Int {
+  public var DIRECT = 0;
+  public var VARIABLE = 1;
+}
+
 enum abstract EventCode(Int) from Int to Int {
   public var END = 0;
   public var SHOWTEXT = 101;
@@ -59,9 +64,10 @@ enum abstract EventCode(Int) from Int to Int {
   /**
    * Change Formation Access
    */
-  public var CHANGEFORMACC = 138;
+  public var CHANGEFORMACC = 137;
 
-  public var CHANGEWINCOLOR = 139;
+  public var CHANGEWINCOLOR = 138;
+  public var CHANGEDEFEATME = 139;
   public var CHANGEVEHICLEBGM = 140;
   public var TRANSFERPLAYER = 201;
   public var SETVEHICLELOC = 202;
