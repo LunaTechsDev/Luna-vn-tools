@@ -37,13 +37,13 @@ class Scene_Map extends RmScene_Map {
   public function createLVNBackdropSprite() {
     this._lvnBackdropSprite = new Sprite();
     this._lvnBackdropSprite.opacity = 0;
-    this.addChildAt(this._lvnBackdropSprite, 3);
+    this.addChildAt(this._lvnBackdropSprite, 1);
   }
 
   public function createLVNScreenPicSprite() {
     this._lvnScreenPicSprite = new Sprite();
     this._lvnScreenPicSprite.opacity = 0;
-    this.addChildAt(this._lvnBackdropSprite, 4);
+    this.addChildAt(this._lvnScreenPicSprite, 1);
   }
 
   public override function createAllWindows() {

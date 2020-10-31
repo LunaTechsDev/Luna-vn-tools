@@ -13,7 +13,7 @@
 -D analyzer-optimize
 
 
---main load.Main
+--main visnov.Main
 
 
 --macro macros.MacroTools.includeJsLib("./src/visnov/Params.js")

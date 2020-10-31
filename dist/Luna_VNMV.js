@@ -2,7 +2,7 @@
  *
  *  Luna_VNMV.js
  * 
- *  Build Date: 10/28/2020
+ *  Build Date: 10/31/2020
  * 
  *  Made with LunaTea -- Haxe
  *
@@ -59,7 +59,8 @@ SOFTWARE
   var $estr = function () {
       return js_Boot.__string_rec(this, "");
     },
-    $hxEnums = $hxEnums || {};
+    $hxEnums = $hxEnums || {},
+    $_;
   class EReg {
     constructor(r, opt) {
       this.r = new RegExp(r, opt.split("u").join(""));
@@ -76,26 +77,43 @@ SOFTWARE
 
   EReg.__name__ = true;
   Math.__name__ = true;
-  class WindowExtensions {
-    static isTouchedInsideFrame(win) {
-      let x = win.canvasToLocalX(TouchInput.x);
-      let y = win.canvasToLocalY(TouchInput.y);
-      if (x >= 0 && y >= 0 && x < win.width) {
-        return y < win.height;
-      } else {
-        return false;
-      }
+  class Std {
+    static string(s) {
+      return js_Boot.__string_rec(s, "");
     }
-    static isOpenOrVisible(win) {
-      if (!win.isOpen()) {
-        return win.visible;
-      } else {
-        return true;
+  }
+
+  Std.__name__ = true;
+  class core_Amaryllis {
+    static lerp(start, end, amount) {
+      return start + (end - start) * amount;
+    }
+  }
+
+  core_Amaryllis.__name__ = true;
+  class haxe_Log {
+    static formatOutput(v, infos) {
+      let str = Std.string(v);
+      if (infos == null) {
+        return str;
+      }
+      let pstr = infos.fileName + ":" + infos.lineNumber;
+      if (infos.customParams != null) {
+        let _g = 0;
+        let _g1 = infos.customParams;
+        while (_g < _g1.length) str += ", " + Std.string(_g1[_g++]);
+      }
+      return pstr + ": " + str;
+    }
+    static trace(v, infos) {
+      let str = haxe_Log.formatOutput(v, infos);
+      if (typeof console != "undefined" && console.log != null) {
+        console.log(str);
       }
     }
   }
 
-  WindowExtensions.__name__ = true;
+  haxe_Log.__name__ = true;
   class haxe_iterators_ArrayIterator {
     constructor(array) {
       this.current = 0;
@@ -221,153 +239,6 @@ SOFTWARE
   }
 
   js_Boot.__name__ = true;
-  class load_Main {
-    static main() {
-      let _g = [];
-      let _g1 = 0;
-      let _g2 = $plugins;
-      while (_g1 < _g2.length) {
-        let v = _g2[_g1];
-        ++_g1;
-        if (new EReg("<LunaVNLoad>", "ig").match(v.description)) {
-          _g.push(v);
-        }
-      }
-      let params = _g[0].parameters;
-      load_Main.Params = {
-        x: parseInt(params["x"], 10),
-        y: parseInt(params["y"], 10),
-        width: parseInt(params["width"], 10),
-        height: parseInt(params["height"], 10),
-        backgroundType: parseInt(params["backgroundType"], 10),
-        loadText: params["loadText"],
-      };
-      console.log("src/load/Main.hx:33:", load_Main.Params);
-
-      //=============================================================================
-      // Scene_Map
-      //=============================================================================
-      let _Scene_Map__loadWindow = Scene_Map.prototype._loadWindow;
-      Scene_Map.prototype._loadWindow = null;
-      let _Scene_Map_createAllWindows = Scene_Map.prototype.createAllWindows;
-      Scene_Map.prototype.createAllWindows = function () {
-        _Scene_Map_createAllWindows.call(this);
-        this.createVNLoadWindow();
-      };
-      let _Scene_Map_createVNLoadWindow =
-        Scene_Map.prototype.createVNLoadWindow;
-      Scene_Map.prototype.createVNLoadWindow = function () {
-        let info = load_Main.Params;
-        this._loadWindow = new load_VNLoadWindow(
-          info.x,
-          info.y,
-          info.width,
-          info.height
-        );
-        this._loadWindow.setLoadText(info.loadText);
-        this._loadWindow.setupEvents(function (win) {
-          win.on("gotoSaveScene", function () {
-            SceneManager.push(Scene_Load);
-          });
-        });
-        this.addWindow(this._loadWindow);
-      };
-      let _Scene_Map_update = Scene_Map.prototype.update;
-      Scene_Map.prototype.update = function () {
-        _Scene_Map_update.call(this);
-        this.processVNLoadWindowVisibility();
-      };
-      let _Scene_Map_processVNLoadWindowVisibility =
-        Scene_Map.prototype.processVNLoadWindowVisibility;
-      Scene_Map.prototype.processVNLoadWindowVisibility = function () {
-        if (
-          WindowExtensions.isOpenOrVisible(this._messageWindow) &&
-          !WindowExtensions.isOpenOrVisible(this._loadWindow)
-        ) {
-          this._loadWindow.show();
-          this._loadWindow.open();
-        } else {
-          this._loadWindow.close();
-          this._loadWindow.hide();
-        }
-      };
-    }
-  }
-
-  load_Main.__name__ = true;
-  class load_MapPatch extends Scene_Map {
-    constructor() {
-      super();
-    }
-    createAllWindows() {
-      _Scene_Map_createAllWindows.call(this);
-      this.createVNLoadWindow();
-    }
-    createVNLoadWindow() {
-      let info = load_Main.Params;
-      this._loadWindow = new load_VNLoadWindow(
-        info.x,
-        info.y,
-        info.width,
-        info.height
-      );
-      this._loadWindow.setLoadText(info.loadText);
-      this._loadWindow.setupEvents(function (win) {
-        win.on("gotoSaveScene", function () {
-          SceneManager.push(Scene_Load);
-        });
-      });
-      this.addWindow(this._loadWindow);
-    }
-    processVNLoadWindowVisibility() {
-      if (
-        WindowExtensions.isOpenOrVisible(this._messageWindow) &&
-        !WindowExtensions.isOpenOrVisible(this._loadWindow)
-      ) {
-        this._loadWindow.show();
-        this._loadWindow.open();
-      } else {
-        this._loadWindow.close();
-        this._loadWindow.hide();
-      }
-    }
-  }
-
-  load_MapPatch.__name__ = true;
-  class load_VNLoadWindow extends Window_Base {
-    constructor(x, y, width, height) {
-      super(x, y, width, height);
-      this._loadText = "";
-      this.setBackgroundType(load_Main.Params.backgroundType);
-    }
-    setupEvents(fn) {
-      fn(this);
-    }
-    update() {
-      _Window_Base_update.call(this);
-      this.refresh();
-      this.processClick();
-    }
-    processClick() {
-      if (WindowExtensions.isTouchedInsideFrame(this)) {
-        this.emit("gotoLoadScene");
-      }
-    }
-    refresh() {
-      if (this.contents != null) {
-        this.contents.clear();
-        this.paintLoadText();
-      }
-    }
-    paintLoadText() {
-      this.drawText(this._loadText, 0, 0, this.contentsWidth(), "center");
-    }
-    setLoadText(text) {
-      this._loadText = text;
-    }
-  }
-
-  load_VNLoadWindow.__name__ = true;
 
   class utils_Fn {
     static proto(obj) {
@@ -382,10 +253,590 @@ SOFTWARE
   }
 
   utils_Fn.__name__ = true;
+  class LunaVN {
+    static main() {
+      let _g = [];
+      let _g1 = 0;
+      let _g2 = $plugins;
+      while (_g1 < _g2.length) {
+        let v = _g2[_g1];
+        ++_g1;
+        if (new EReg("<LunaVN>", "ig").match(v.description)) {
+          _g.push(v);
+        }
+      }
+      let plugin = _g[0];
+      let params = plugin.parameters;
+      LunaVN.Params = {
+        bustLimit: parseInt(params["bustLimit"], 10),
+        breathingAnim: params["breathingAnim"].toLowerCase().trim() == "true",
+      };
+      haxe_Log.trace(LunaVN.Params, {
+        fileName: "src/visnov/Main.hx",
+        lineNumber: 31,
+        className: "visnov.Main",
+        methodName: "main",
+      });
+
+      //=============================================================================
+      // Scene_Map
+      //=============================================================================
+      let _Scene_Map__lvnBusts = Scene_Map.prototype._lvnBusts;
+      Scene_Map.prototype._lvnBusts = null;
+      let _Scene_Map__lvnListener = Scene_Map.prototype._lvnListener;
+      Scene_Map.prototype._lvnListener = null;
+      let _Scene_Map__lvnBackdropSprite =
+        Scene_Map.prototype._lvnBackdropSprite;
+      Scene_Map.prototype._lvnBackdropSprite = null;
+      let _Scene_Map__lvnScreenPicSprite =
+        Scene_Map.prototype._lvnScreenPicSprite;
+      Scene_Map.prototype._lvnScreenPicSprite = null;
+      let _Scene_Map__shadowBackdropOpacity =
+        Scene_Map.prototype._shadowBackdropOpacity;
+      Scene_Map.prototype._shadowBackdropOpacity = null;
+      let _Scene_Map__shadowScreenPicOpacity =
+        Scene_Map.prototype._shadowScreenPicOpacity;
+      Scene_Map.prototype._shadowScreenPicOpacity = null;
+      let _Scene_Map_initialize = Scene_Map.prototype.initialize;
+      Scene_Map.prototype.initialize = function () {
+        _Scene_Map_initialize.call(this);
+        this._lvnBusts = [];
+        this._lvnListener = new PIXI.utils.EventEmitter();
+        this._shadowBackdropOpacity = 0;
+        this._shadowScreenPicOpacity = 0;
+        this.setupBackdropEvents();
+        this.setupScreenPicEvents();
+      };
+      let _Scene_Map_createDisplayObjects =
+        Scene_Map.prototype.createDisplayObjects;
+      Scene_Map.prototype.createDisplayObjects = function () {
+        _Scene_Map_createDisplayObjects.call(this);
+        this.createLVNBackdropSprite();
+        this.createLVNScreenPicSprite();
+      };
+      let _Scene_Map_createLVNBackdropSprite =
+        Scene_Map.prototype.createLVNBackdropSprite;
+      Scene_Map.prototype.createLVNBackdropSprite = function () {
+        this._lvnBackdropSprite = new Sprite();
+        this._lvnBackdropSprite.opacity = 0;
+        this.addChildAt(this._lvnBackdropSprite, 1);
+      };
+      let _Scene_Map_createLVNScreenPicSprite =
+        Scene_Map.prototype.createLVNScreenPicSprite;
+      Scene_Map.prototype.createLVNScreenPicSprite = function () {
+        this._lvnScreenPicSprite = new Sprite();
+        this._lvnScreenPicSprite.opacity = 0;
+        this.addChildAt(this._lvnScreenPicSprite, 1);
+      };
+      let _Scene_Map_createAllWindows = Scene_Map.prototype.createAllWindows;
+      Scene_Map.prototype.createAllWindows = function () {
+        _Scene_Map_createAllWindows.call(this);
+        this.addBustsToMessageWindow();
+      };
+      let _Scene_Map_addBustsToMessageWindow =
+        Scene_Map.prototype.addBustsToMessageWindow;
+      Scene_Map.prototype.addBustsToMessageWindow = function () {
+        let _g = 0;
+        let _g1 = LunaVN.Params.bustLimit;
+        while (_g < _g1) {
+          let index = _g++;
+          let bust = new LVNSpriteBust(0, 0);
+          this.setupBustEvents(bust);
+          this._lvnBusts.push(bust);
+          this._messageWindow.addChild(bust);
+        }
+      };
+      let _Scene_Map_setupBustEvents = Scene_Map.prototype.setupBustEvents;
+      Scene_Map.prototype.setupBustEvents = function (bust) {
+        let _gthis = this;
+        LunaVN.listener.on("showBust", function (id) {
+          let bust = _gthis.bust(id);
+          bust.show();
+        });
+        LunaVN.listener.on("hideBust", function (id) {
+          let bust = _gthis.bust(id);
+          bust.hide();
+        });
+        LunaVN.listener.on("moveBustTo", function (id, x, y) {
+          let bust = _gthis.bust(id);
+          bust.moveTo(x, y);
+        });
+        LunaVN.listener.on("moveBustBy", function (id, x, y) {
+          let bust = _gthis.bust(id);
+          bust.moveBy(x, y);
+        });
+        LunaVN.listener.on("fadeToBust", function (id, opacity, duration) {
+          let bust = _gthis.bust(id);
+          bust.fadeTo(opacity, duration);
+        });
+        LunaVN.listener.on("fadeByBust", function (id, opacity, duration) {
+          let bust = _gthis.bust(id);
+          bust.fadeBy(opacity, duration);
+        });
+        LunaVN.listener.on("scaleTo", function (id, x, y, duration) {
+          let bust = _gthis.bust(id);
+          bust.scaleTo(x, y, duration);
+        });
+        LunaVN.listener.on("setBust", function (id, bustSetName) {
+          let bust = _gthis.bust(id);
+          bust.setBust(bustSetName);
+        });
+      };
+      let _Scene_Map_setupBackdropEvents =
+        Scene_Map.prototype.setupBackdropEvents;
+      Scene_Map.prototype.setupBackdropEvents = function () {
+        let _gthis = this;
+        LunaVN.listener.on("setBackdrop", function (imageName) {
+          _gthis.setBackdrop(imageName);
+        });
+        LunaVN.listener.on("showBackdrop", function () {
+          _gthis._shadowBackdropOpacity = 255;
+        });
+        LunaVN.listener.on("hideBackdrop", function () {
+          _gthis._shadowBackdropOpacity = 0;
+        });
+      };
+      let _Scene_Map_setupScreenPicEvents =
+        Scene_Map.prototype.setupScreenPicEvents;
+      Scene_Map.prototype.setupScreenPicEvents = function () {
+        let _gthis = this;
+        LunaVN.listener.on("setScreenPic", function (imageName) {
+          _gthis.setScreenPicture(imageName);
+        });
+        LunaVN.listener.on("showScreenPic", function () {
+          _gthis._shadowScreenPicOpacity = 255;
+        });
+        LunaVN.listener.on("hideScreenPic", function () {
+          _gthis._shadowScreenPicOpacity = 0;
+        });
+      };
+      let _Scene_Map_bust = Scene_Map.prototype.bust;
+      Scene_Map.prototype.bust = function (Id) {
+        return this._lvnBusts[Id - 1];
+      };
+      let _Scene_Map_setBackdrop = Scene_Map.prototype.setBackdrop;
+      Scene_Map.prototype.setBackdrop = function (imageName) {
+        let _gthis = this;
+        let bitmap = ImageManager.loadPicture(imageName);
+        bitmap.addLoadListener(function (bitmap) {
+          _gthis._lvnBackdropSprite.bitmap = bitmap;
+          LunaVN.listener.emit("showBackdrop");
+        });
+      };
+      let _Scene_Map_setScreenPicture = Scene_Map.prototype.setScreenPicture;
+      Scene_Map.prototype.setScreenPicture = function (imageName) {
+        let _gthis = this;
+        let bitmap = ImageManager.loadPicture(imageName);
+        bitmap.addLoadListener(function (bitmap) {
+          _gthis._lvnScreenPicSprite.bitmap = bitmap;
+          LunaVN.listener.emit("showScreenPic");
+        });
+      };
+      let _Scene_Map_update = Scene_Map.prototype.update;
+      Scene_Map.prototype.update = function () {
+        _Scene_Map_update.call(this);
+        this.updateBackdrop();
+        this.updateScreenSprite();
+      };
+      let _Scene_Map_updateBackdrop = Scene_Map.prototype.updateBackdrop;
+      Scene_Map.prototype.updateBackdrop = function () {
+        let opacityResult = this._lvnBackdropSprite.opacity;
+        if (this._shadowBackdropOpacity != this._lvnBackdropSprite.opacity) {
+          opacityResult = core_Amaryllis.lerp(
+            this._lvnBackdropSprite.opacity,
+            this._shadowBackdropOpacity,
+            0.045
+          );
+        }
+        if (
+          Math.abs(
+            this._shadowBackdropOpacity - this._lvnBackdropSprite.opacity
+          ) < 0.5
+        ) {
+          opacityResult = Math.round(opacityResult);
+        }
+        this._lvnBackdropSprite.opacity = opacityResult;
+      };
+      let _Scene_Map_updateScreenSprite =
+        Scene_Map.prototype.updateScreenSprite;
+      Scene_Map.prototype.updateScreenSprite = function () {
+        let opacityResult = this._lvnScreenPicSprite.opacity;
+        if (this._shadowScreenPicOpacity != this._lvnScreenPicSprite.opacity) {
+          opacityResult = core_Amaryllis.lerp(
+            this._lvnScreenPicSprite.opacity,
+            this._shadowScreenPicOpacity,
+            0.045
+          );
+        }
+        if (
+          Math.abs(
+            this._shadowScreenPicOpacity - this._lvnScreenPicSprite.opacity
+          ) < 0.5
+        ) {
+          opacityResult = Math.round(opacityResult);
+        }
+        this._lvnScreenPicSprite.opacity = opacityResult;
+      };
+    }
+    static params() {
+      return LunaVN.Params;
+    }
+    static registerAllPluginCommands(pluginName) {}
+    static moveBustTo(id, x, y) {
+      LunaVN.listener.emit("moveBustTo", id, x, y);
+    }
+    static moveBustBy(id, x, y) {
+      LunaVN.listener.emit("moveBustBy", id, x, y);
+    }
+    static hideBust(id) {
+      LunaVN.listener.emit("hideBust", id);
+    }
+    static showBust(id) {
+      LunaVN.listener.emit("showBust", id);
+    }
+    static fadeBustTo(Id, opacity, duration) {
+      LunaVN.listener.emit("fadeToBust", Id, opacity, duration);
+    }
+    static fadeBustBy(id, opacity, duration) {
+      LunaVN.listener.emit("fadeByBust", id, opacity, duration);
+    }
+    static scaleBustTo(id, x, y, duration) {
+      LunaVN.listener.emit("scaleTo", x, y, duration);
+    }
+    static emoteBust(id, emote) {
+      LunaVN.listener.emit("emoteBust", id, emote);
+    }
+    static animateBust(id, animation) {
+      LunaVN.listener.emit("animBust", id, animation);
+    }
+    static highlightBust(id) {
+      LunaVN.listener.emit("highlightBust", id);
+    }
+    static darkenBust(id) {
+      LunaVN.listener.emit("darkenBust", id);
+    }
+    static setBust(id, bustSetName) {}
+    static setBackdrop(imageName) {
+      LunaVN.listener.emit("setBackdrop", imageName);
+    }
+    static showBackdrop() {
+      LunaVN.listener.emit("showBackdrop");
+    }
+    static hideBackdrop() {
+      LunaVN.listener.emit("hideBackdrop");
+    }
+    static setScreenPic(imageName) {
+      LunaVN.listener.emit("setScreenPic", imageName);
+    }
+    static showScreenPic() {
+      LunaVN.listener.emit("showScreenPic");
+    }
+    static hideScreenPic() {
+      LunaVN.listener.emit("hideScreenPic");
+    }
+  }
+
+  $hx_exports["LunaVN"] = LunaVN;
+  LunaVN.__name__ = true;
+  class visnov_Scene_$Map extends Scene_Map {
+    constructor() {
+      super();
+    }
+    initialize() {
+      _Scene_Map_initialize.call(this);
+      this._lvnBusts = [];
+      this._lvnListener = new PIXI.utils.EventEmitter();
+      this._shadowBackdropOpacity = 0;
+      this._shadowScreenPicOpacity = 0;
+      this.setupBackdropEvents();
+      this.setupScreenPicEvents();
+    }
+    createDisplayObjects() {
+      _Scene_Map_createDisplayObjects.call(this);
+      this.createLVNBackdropSprite();
+      this.createLVNScreenPicSprite();
+    }
+    createLVNBackdropSprite() {
+      this._lvnBackdropSprite = new Sprite();
+      this._lvnBackdropSprite.opacity = 0;
+      this.addChildAt(this._lvnBackdropSprite, 1);
+    }
+    createLVNScreenPicSprite() {
+      this._lvnScreenPicSprite = new Sprite();
+      this._lvnScreenPicSprite.opacity = 0;
+      this.addChildAt(this._lvnScreenPicSprite, 1);
+    }
+    createAllWindows() {
+      _Scene_Map_createAllWindows.call(this);
+      this.addBustsToMessageWindow();
+    }
+    addBustsToMessageWindow() {
+      let _g = 0;
+      let _g1 = LunaVN.Params.bustLimit;
+      while (_g < _g1) {
+        ++_g;
+        let bust = new LVNSpriteBust(0, 0);
+        this.setupBustEvents(bust);
+        this._lvnBusts.push(bust);
+        this._messageWindow.addChild(bust);
+      }
+    }
+    setupBustEvents(bust) {
+      let _gthis = this;
+      LunaVN.listener.on("showBust", function (id) {
+        _gthis.bust(id).show();
+      });
+      LunaVN.listener.on("hideBust", function (id) {
+        _gthis.bust(id).hide();
+      });
+      LunaVN.listener.on("moveBustTo", function (id, x, y) {
+        _gthis.bust(id).moveTo(x, y);
+      });
+      LunaVN.listener.on("moveBustBy", function (id, x, y) {
+        _gthis.bust(id).moveBy(x, y);
+      });
+      LunaVN.listener.on("fadeToBust", function (id, opacity, duration) {
+        _gthis.bust(id).fadeTo(opacity, duration);
+      });
+      LunaVN.listener.on("fadeByBust", function (id, opacity, duration) {
+        _gthis.bust(id).fadeBy(opacity, duration);
+      });
+      LunaVN.listener.on("scaleTo", function (id, x, y, duration) {
+        _gthis.bust(id).scaleTo(x, y, duration);
+      });
+      LunaVN.listener.on("setBust", function (id, bustSetName) {
+        _gthis.bust(id).setBust(bustSetName);
+      });
+    }
+    setupBackdropEvents() {
+      let _gthis = this;
+      LunaVN.listener.on("setBackdrop", function (imageName) {
+        _gthis.setBackdrop(imageName);
+      });
+      LunaVN.listener.on("showBackdrop", function () {
+        _gthis._shadowBackdropOpacity = 255;
+      });
+      LunaVN.listener.on("hideBackdrop", function () {
+        _gthis._shadowBackdropOpacity = 0;
+      });
+    }
+    setupScreenPicEvents() {
+      let _gthis = this;
+      LunaVN.listener.on("setScreenPic", function (imageName) {
+        _gthis.setScreenPicture(imageName);
+      });
+      LunaVN.listener.on("showScreenPic", function () {
+        _gthis._shadowScreenPicOpacity = 255;
+      });
+      LunaVN.listener.on("hideScreenPic", function () {
+        _gthis._shadowScreenPicOpacity = 0;
+      });
+    }
+    bust(Id) {
+      return this._lvnBusts[Id - 1];
+    }
+    setBackdrop(imageName) {
+      let _gthis = this;
+      ImageManager.loadPicture(imageName).addLoadListener(function (bitmap) {
+        _gthis._lvnBackdropSprite.bitmap = bitmap;
+        LunaVN.listener.emit("showBackdrop");
+      });
+    }
+    setScreenPicture(imageName) {
+      let _gthis = this;
+      ImageManager.loadPicture(imageName).addLoadListener(function (bitmap) {
+        _gthis._lvnScreenPicSprite.bitmap = bitmap;
+        LunaVN.listener.emit("showScreenPic");
+      });
+    }
+    updateBackdrop() {
+      let opacityResult = this._lvnBackdropSprite.opacity;
+      if (this._shadowBackdropOpacity != this._lvnBackdropSprite.opacity) {
+        opacityResult = core_Amaryllis.lerp(
+          this._lvnBackdropSprite.opacity,
+          this._shadowBackdropOpacity,
+          0.045
+        );
+      }
+      if (
+        Math.abs(
+          this._shadowBackdropOpacity - this._lvnBackdropSprite.opacity
+        ) < 0.5
+      ) {
+        opacityResult = Math.round(opacityResult);
+      }
+      this._lvnBackdropSprite.opacity = opacityResult;
+    }
+    updateScreenSprite() {
+      let opacityResult = this._lvnScreenPicSprite.opacity;
+      if (this._shadowScreenPicOpacity != this._lvnScreenPicSprite.opacity) {
+        opacityResult = core_Amaryllis.lerp(
+          this._lvnScreenPicSprite.opacity,
+          this._shadowScreenPicOpacity,
+          0.045
+        );
+      }
+      if (
+        Math.abs(
+          this._shadowScreenPicOpacity - this._lvnScreenPicSprite.opacity
+        ) < 0.5
+      ) {
+        opacityResult = Math.round(opacityResult);
+      }
+      this._lvnScreenPicSprite.opacity = opacityResult;
+    }
+  }
+
+  visnov_Scene_$Map.__name__ = true;
+  var visnov_sprites_MoveType = ($hxEnums["visnov.sprites.MoveType"] = {
+    __ename__: true,
+    __constructs__: ["Linear"],
+    Linear: {
+      _hx_index: 0,
+      __enum__: "visnov.sprites.MoveType",
+      toString: $estr,
+    },
+  });
+
+  class LVNSpriteBust extends Sprite_Base {
+    constructor(x, y, bitmap) {
+      super();
+      if (bitmap != null) {
+        this.bitmap = bitmap;
+        this.handleLoading(this.bitmap);
+      }
+      this.x = x;
+      this.y = y;
+      this._moveWait = 30;
+    }
+    setBust(bustSetName) {
+      this.bitmap = ImageManager.loadPicture(bustSetName, 0);
+      this.handleLoading(this.bitmap);
+    }
+    handleLoading(bitmap) {
+      let _gthis = this;
+      bitmap.addLoadListener(function (bitmap) {
+        haxe_Log.trace("Loaded Sprite Bust", {
+          fileName: "src/visnov/sprites/SpriteBust.hx",
+          lineNumber: 48,
+          className: "visnov.sprites.SpriteBust",
+          methodName: "handleLoading",
+        });
+        _gthis.show();
+      });
+    }
+    initialize() {
+      super.initialize();
+      this._fadeDuration = 0;
+      this._shadowOpacity = this.alpha;
+      this._shadowX = this.x;
+      this._shadowY = this.y;
+      this._defaultMoveType = visnov_sprites_MoveType.Linear;
+    }
+    moveTo(x, y) {
+      this._shadowX = x;
+      if (y != null) {
+        this._shadowY = y;
+      }
+      this._moveWait = 30;
+      haxe_Log.trace("Starting Move", {
+        fileName: "src/visnov/sprites/SpriteBust.hx",
+        lineNumber: 74,
+        className: "visnov.sprites.SpriteBust",
+        methodName: "moveTo",
+        customParams: [this._moveWait],
+      });
+    }
+    moveBy(x, y) {
+      this._shadowX += x;
+      if (y != null) {
+        this._shadowY += y;
+      }
+      this._moveWait = 30;
+    }
+    fadeTo(opacity, duration) {
+      if (duration == null) {
+        duration = 30;
+      }
+      this._shadowOpacity = opacity;
+      this._fadeDuration = duration;
+    }
+    fadeBy(opacity, duration) {
+      if (duration == null) {
+        duration = 30;
+      }
+      this._shadowOpacity += opacity;
+      this._fadeDuration = duration;
+    }
+    scaleTo(x, y, duration) {
+      if (duration == null) {
+        duration = 30;
+      }
+      this.scale.set(x, y);
+      this._scaleDuration = duration;
+    }
+    update() {
+      super.update();
+      this.updateFade();
+      this.updateScaling();
+      if (this._moveWait == 0) {
+        this.updateMovement();
+      }
+      if (this._moveWait > 0) {
+        this._moveWait--;
+      }
+    }
+    updateFade() {}
+    updateScaling() {}
+    updateMovement() {
+      let xResult = this.x;
+      let yResult = this.y;
+      if (this._shadowX != this.x) {
+        xResult = core_Amaryllis.lerp(this.x, this._shadowX, 0.025);
+      }
+      if (this._shadowY != this.y) {
+        yResult = core_Amaryllis.lerp(this.y, this._shadowY, 0.025);
+      }
+      if (this._shadowX == this.x && this._shadowY == this.y) {
+        this._moveWait = -1;
+        haxe_Log.trace("Disable Moving", {
+          fileName: "src/visnov/sprites/SpriteBust.hx",
+          lineNumber: 135,
+          className: "visnov.sprites.SpriteBust",
+          methodName: "updateMovement",
+        });
+      }
+      if (Math.abs(this._shadowX - this.x) < 0.5) {
+        xResult = Math.round(xResult);
+      }
+      if (Math.abs(this._shadowY - this.y) < 0.5) {
+        yResult = Math.round(yResult);
+      }
+      this.move(xResult, yResult);
+      haxe_Log.trace("Moving", {
+        fileName: "src/visnov/sprites/SpriteBust.hx",
+        lineNumber: 148,
+        className: "visnov.sprites.SpriteBust",
+        methodName: "updateMovement",
+        customParams: [this.x, this.y],
+      });
+      this._refresh();
+    }
+    oscillateSize() {
+      let xYResult = Math.abs(Math.sin(new Date().getTime() / 1000) / 2.0);
+      this.scale.x = 1 - xYResult;
+      this.scale.y = 1 - xYResult;
+    }
+  }
+
+  $hx_exports["LVNSpriteBust"] = LVNSpriteBust;
+  LVNSpriteBust.__name__ = true;
   String.__name__ = true;
   Array.__name__ = true;
+  Date.__name__ = "Date";
   js_Boot.__toStr = {}.toString;
-  load_Main.main();
+  LunaVN.listener = new PIXI.utils.EventEmitter();
+  LunaVN.main();
 })(
   typeof exports != "undefined"
     ? exports
