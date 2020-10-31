@@ -35,4 +35,8 @@ enum abstract VNSysEvents(String) from String to String {
   public var HIGHLIGHTBUST = 'highlightBust';
   public var DARKENBUST = 'darkenBust';
   public var SETBUST = 'setBust';
+  public var SHOWBACKDROP = 'showBackdrop';
+  public var HIDEBACKDROP = 'hideBackdrop';
+  public var SHOWSCREENPIC = 'showScreenPic';
+  public var HIDESCREENPIC = 'hideScreenPic';
 }
