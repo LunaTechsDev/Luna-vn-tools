@@ -44,6 +44,23 @@ the new one.
 @text Hide Backdrop
 @desc Allows you to hide the backdrop when working with your Visual Novel.
 
+@command showMsgWindow
+@text Show Message Window
+@desc Shows the message window during a visual novel scene instantly.
+
+@command hideMsgWindow
+@text Hide Message Window 
+@desc Hides the message window during a visual novel scene instantly.
+
+@command fadeInMsgWindow
+@text Fade In Message Window
+@desc Fades in the message window during a visual novel scene over time.
+
+@command fadeOutMsgWindow
+@text Fade Out Message Window
+@desc Fades out the message window during a visual novel scene over time.
+
+
 
 
 @help
