@@ -100,6 +100,34 @@ class Main {
       var params: Dynamic = JsonEx.parse(jsonParams);
       setBust(params.id, params.bustSetName);
     });
+
+    PluginManager.registerCommand(pluginName, 'setBackdrop', (jsonParams) -> {
+      var params: Dynamic = JsonEx.parse(jsonParams);
+      setBackdrop(params.imageName);
+    });
+
+    PluginManager.registerCommand(pluginName, 'showBackdrop', (jsonParams) -> {
+      var params: Dynamic = JsonEx.parse(jsonParams);
+      showBackdrop();
+    });
+
+    PluginManager.registerCommand(pluginName, 'hideBackdrop', (jsonParams) -> {
+      var params: Dynamic = JsonEx.parse(jsonParams);
+      hideBackdrop();
+    });
+
+    PluginManager.registerCommand(pluginName, 'setScreenPic', (jsonParams) -> {
+      var params: Dynamic = JsonEx.parse(jsonParams);
+      setScreenPic(params.imageName);
+    });
+
+    PluginManager.registerCommand(pluginName, 'showScreenPic', (jsonParams) -> {
+      showScreenPic();
+    });
+
+    PluginManager.registerCommand(pluginName, 'hideScreenPic', (jsonParams) -> {
+      hideScreenPic();
+    });
     #end
   }
 
