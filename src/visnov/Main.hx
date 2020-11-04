@@ -26,7 +26,11 @@ class Main {
     var params = plugin.parameters;
     Params = {
       bustLimit: Fn.parseIntJs(params['bustLimit']),
-      breathingAnim: untyped params['breathingAnim'].toLowerCase().trim() == 'true'
+      breathingAnim: untyped params['breathingAnim'].toLowerCase().trim() == 'true',
+      msgWindowX: Fn.parseIntJs(params['msgWindowX']),
+      msgWindowY: Fn.parseIntJs(params['msgWindowY']),
+      msgWindowWidth: Fn.parseIntJs(params['msgWindowWidth']),
+      msgWindowHeight: Fn.parseIntJs(params['msgWindowHeight'])
     };
 
     trace(Params);

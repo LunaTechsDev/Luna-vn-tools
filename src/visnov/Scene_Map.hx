@@ -8,6 +8,7 @@ import pixi.interaction.EventEmitter;
 import visnov.sprites.SpriteBust;
 import rm.scenes.Scene_Map as RmScene_Map;
 import core.VNExtensions;
+import rm.core.Rectangle;
 
 class Scene_Map extends RmScene_Map {
   public var _lvnBusts: Array<SpriteBust>;
@@ -27,6 +28,14 @@ class Scene_Map extends RmScene_Map {
     this.setupBackdropEvents();
     this.setupScreenPicEvents();
   }
+
+  #if compileMV
+  #else
+  public override function messageWindowRect() {
+    var params = Main.Params;
+    return new Rectangle(params.msgWindowX, params.msgWindowY, params.msgWindowWidth, params.msgWindowHeight);
+  }
+  #end
 
   public override function createDisplayObjects() {
     // super.createDisplayObjects();
@@ -167,11 +176,9 @@ class Scene_Map extends RmScene_Map {
 
   public function updateBackdrop() {
     VNExtensions.updateFade(this._shadowBackdropOpacity, cast this._lvnBackdropSprite);
-   
   }
 
   public function updateScreenSprite() {
     VNExtensions.updateFade(this._shadowScreenPicOpacity, cast this._lvnScreenPicSprite);
-  
   }
 }

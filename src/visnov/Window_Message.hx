@@ -2,7 +2,6 @@ package visnov;
 
 import core.Amaryllis;
 import visnov.Types.VNSysEvents;
-import core.VNExtensions;
 import rm.core.Rectangle;
 import rm.windows.Window_Message as RmWindow_Message;
 
@@ -12,7 +11,16 @@ class Window_Message extends RmWindow_Message {
 
   #if compileMV
   public override function initialize() {
-    untyped _Window_Message_intiailize.call(this);
+    var params = Main.params;
+    var width = params.msgWindowWidth;
+    var height = params.msgWindowHeight;
+    var x = params.msgWindowX;
+    var y = params.msgWindowY;
+    this.openness = 0;
+    this.initMembers();
+    this.createSubWindows();
+    this.updatePlacement();
+    untyped _Window_Message_intiailize.call(this, x, y, width, height);
     this._shadowVNFadeComplete = true;
     this.setupLVNEvents();
   }

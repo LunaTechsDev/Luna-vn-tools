@@ -3,6 +3,10 @@ package visnov;
 typedef VNParams = {
   var bustLimit: Int;
   var breathingAnim: Bool;
+  var msgWindowX: Float;
+  var msgWindowY: Float;
+  var msgWindowWidth: Float;
+  var msgWindowHeight: Float;
 };
 
 enum abstract BustEvents(String) from String to String {

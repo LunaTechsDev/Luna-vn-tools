@@ -4,6 +4,22 @@
 
 @target MV MZ
 
+@param msgWindowX
+@text Message Window X
+@desc The X position of the message window.
+
+@param msgWindowY
+@text Message Window Y
+@desc The Y position of the message window.
+
+@param msgWindowWidth
+@text Message Window Width
+@desc The width of the message window.
+
+@param msgWindowHeight
+@text Message Window Height
+@desc The height of the message window.
+
 @param bustLimit
 @text Bust Limit
 @desc The limit of how many busts to show on screen at one time.
