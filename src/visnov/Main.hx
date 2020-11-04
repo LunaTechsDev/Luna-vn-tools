@@ -11,6 +11,7 @@ import macros.FnMacros;
 import utils.Comment;
 import rm.Globals;
 import rm.scenes.Scene_Map as RmScene_Map;
+import rm.windows.Window_Message as RmWindow_Message;
 
 using StringTools;
 
@@ -31,6 +32,9 @@ class Main {
     trace(Params);
     Comment.title('Scene_Map');
     FnMacros.jsPatch(true, RmScene_Map, Scene_Map);
+
+    Comment.title('Window_Message');
+    FnMacros.jsPatch(true, RmWindow_Message, Window_Message);
     registerAllPluginCommands(plugin.name);
   }
 
@@ -128,6 +132,22 @@ class Main {
     PluginManager.registerCommand(pluginName, 'hideScreenPic', (jsonParams) -> {
       hideScreenPic();
     });
+
+    PluginManager.registerCommand(pluginName, 'showMsgWindow', (jsonParams) -> {
+      showMsgWindow();
+    });
+
+    PluginManager.registerCommand(pluginName, 'hideMsgWindow', (jsonParams) -> {
+      hideMsgWindow();
+    });
+
+    PluginManager.registerCommand(pluginName, 'fadeInMsgWindow', (jsonParams) -> {
+      fadeInMsgWindow();
+    });
+
+    PluginManager.registerCommand(pluginName, 'fadeOutMsgWindow', (jsonParams) -> {
+      fadeOutMsgWindow();
+    });
     #end
   }
 
@@ -200,5 +220,21 @@ class Main {
 
   public static function hideScreenPic() {
     listener.emit(VNSysEvents.HIDESCREENPIC);
+  }
+
+  public static function showMsgWindow() {
+    listener.emit(VNSysEvents.SHOWMSGWINDOW);
+  }
+
+  public static function hideMsgWindow() {
+    listener.emit(VNSysEvents.HIDEMSGWINDOW);
+  }
+
+  public static function fadeInMsgWindow() {
+    listener.emit(VNSysEvents.FADEINMSGWINDOW);
+  }
+
+  public static function fadeOutMsgWindow() {
+    listener.emit(VNSysEvents.FADEOUTMSGWINDOW);
   }
 }
