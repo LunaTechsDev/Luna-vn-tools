@@ -167,26 +167,11 @@ class Scene_Map extends RmScene_Map {
 
   public function updateBackdrop() {
     VNExtensions.updateFade(this._shadowBackdropOpacity, cast this._lvnBackdropSprite);
-    // var opacityResult = this._lvnBackdropSprite.opacity;
-    // if (this._shadowBackdropOpacity != this._lvnBackdropSprite.opacity) {
-    //   opacityResult = Amaryllis.lerp(this._lvnBackdropSprite.opacity, this._shadowBackdropOpacity, 0.045);
-    // }
-    // if (Math.abs(this._shadowBackdropOpacity - this._lvnBackdropSprite.opacity) < 0.5) {
-    //   opacityResult = Math.round(opacityResult);
-    // }
-    // this._lvnBackdropSprite.opacity = opacityResult;
+   
   }
 
   public function updateScreenSprite() {
     VNExtensions.updateFade(this._shadowScreenPicOpacity, cast this._lvnScreenPicSprite);
-    // var opacityResult = this._lvnScreenPicSprite.opacity;
-    // if (this._shadowScreenPicOpacity != this._lvnScreenPicSprite.opacity) {
-    //   opacityResult = Amaryllis.lerp(this._lvnScreenPicSprite.opacity, this._shadowScreenPicOpacity, 0.045);
-    // }
-
-    // if (Math.abs(this._shadowScreenPicOpacity - this._lvnScreenPicSprite.opacity) < 0.5) {
-    //   opacityResult = Math.round(opacityResult);
-    // }
-    // this._lvnScreenPicSprite.opacity = opacityResult;
+  
   }
 }

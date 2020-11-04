@@ -2,7 +2,7 @@
  *
  *  Luna_VN.js
  * 
- *  Build Date: 10/31/2020
+ *  Build Date: 11/3/2020
  * 
  *  Made with LunaTea -- Haxe
  *
@@ -15,10 +15,6 @@
 
 @target MV MZ
 
-@command callEvent
-@text Call Event
-@desc Allows you to call an event from any map with any event ID
-
 @param bustLimit
 @text Bust Limit
 @desc The limit of how many busts to show on screen at one time.
@@ -30,6 +26,53 @@ the new one.
 @text Breathing Animation
 @desc Whether the busts will have a breathing animation when on screen.
 @default true
+
+@command moveBustTo
+@text Move Bust To
+@desc Allows you to call an event from any map with any event ID
+
+@command setScreenPic
+@text Set Screen Picture
+@desc Sets the screen picture for your visual novel scene.
+
+@command showScreenPic
+@text Show Screen Picture
+@desc Shows the screen picture for your visual novel scene.
+
+@command hideScreenPic
+@text Hide Screen Picture
+@desc Hides the screen picture for your visual novel.
+
+@command setBackdrop
+@text Set Backdrop
+@desc Sets the new backdrop image for your visual novel scene.
+
+@command showBackdrop
+@text Show Backdrop
+@desc Shows the backdrop for the Visual Novel scene for the user.
+
+@command hideBackdrop
+@text Hide Backdrop
+@desc Allows you to hide the backdrop when working with your Visual Novel.
+
+@command showMsgWindow
+@text Show Message Window
+@desc Shows the message window during a visual novel scene instantly.
+
+@command hideMsgWindow
+@text Hide Message Window 
+@desc Hides the message window during a visual novel scene instantly.
+
+@command fadeInMsgWindow
+@text Fade In Message Window
+@desc Fades in the message window during a visual novel scene over time.
+
+@command fadeOutMsgWindow
+@text Fade Out Message Window
+@desc Fades out the message window during a visual novel scene over time.
+
+
+
 
 @help
 ==== How To Use ====
@@ -273,7 +316,7 @@ SOFTWARE
       };
       haxe_Log.trace(LunaVN.Params, {
         fileName: "src/visnov/Main.hx",
-        lineNumber: 31,
+        lineNumber: 32,
         className: "visnov.Main",
         methodName: "main",
       });
@@ -440,42 +483,114 @@ SOFTWARE
       };
       let _Scene_Map_updateBackdrop = Scene_Map.prototype.updateBackdrop;
       Scene_Map.prototype.updateBackdrop = function () {
-        let opacityResult = this._lvnBackdropSprite.opacity;
-        if (this._shadowBackdropOpacity != this._lvnBackdropSprite.opacity) {
+        let shadowOpacity = this._shadowBackdropOpacity;
+        let displayObj = this._lvnBackdropSprite;
+        let opacityResult = displayObj.opacity;
+        if (shadowOpacity != displayObj.opacity) {
           opacityResult = core_Amaryllis.lerp(
-            this._lvnBackdropSprite.opacity,
-            this._shadowBackdropOpacity,
+            displayObj.opacity,
+            shadowOpacity,
             0.045
           );
         }
-        if (
-          Math.abs(
-            this._shadowBackdropOpacity - this._lvnBackdropSprite.opacity
-          ) < 0.5
-        ) {
+        if (Math.abs(shadowOpacity - displayObj.opacity) < 0.5) {
           opacityResult = Math.round(opacityResult);
         }
-        this._lvnBackdropSprite.opacity = opacityResult;
+        displayObj.opacity = opacityResult;
       };
       let _Scene_Map_updateScreenSprite =
         Scene_Map.prototype.updateScreenSprite;
       Scene_Map.prototype.updateScreenSprite = function () {
-        let opacityResult = this._lvnScreenPicSprite.opacity;
-        if (this._shadowScreenPicOpacity != this._lvnScreenPicSprite.opacity) {
+        let shadowOpacity = this._shadowScreenPicOpacity;
+        let displayObj = this._lvnScreenPicSprite;
+        let opacityResult = displayObj.opacity;
+        if (shadowOpacity != displayObj.opacity) {
           opacityResult = core_Amaryllis.lerp(
-            this._lvnScreenPicSprite.opacity,
-            this._shadowScreenPicOpacity,
+            displayObj.opacity,
+            shadowOpacity,
             0.045
           );
         }
-        if (
-          Math.abs(
-            this._shadowScreenPicOpacity - this._lvnScreenPicSprite.opacity
-          ) < 0.5
-        ) {
+        if (Math.abs(shadowOpacity - displayObj.opacity) < 0.5) {
           opacityResult = Math.round(opacityResult);
         }
-        this._lvnScreenPicSprite.opacity = opacityResult;
+        displayObj.opacity = opacityResult;
+      };
+
+      //=============================================================================
+      // Window_Message
+      //=============================================================================
+      let _Window_Message__shadowVNWinOpacity =
+        Window_Message.prototype._shadowVNWinOpacity;
+      Window_Message.prototype._shadowVNWinOpacity = null;
+      let _Window_Message__shadowVNFadeComplete =
+        Window_Message.prototype._shadowVNFadeComplete;
+      Window_Message.prototype._shadowVNFadeComplete = null;
+      let _Window_Message_initialize = Window_Message.prototype.initialize;
+      Window_Message.prototype.initialize = function (rect) {
+        _Window_Message_initialize.call(this, rect);
+        this._shadowVNFadeComplete = true;
+        this.setupLVNEvents();
+      };
+      let _Window_Message_setupLVNEvents =
+        Window_Message.prototype.setupLVNEvents;
+      Window_Message.prototype.setupLVNEvents = function () {
+        let _gthis = this;
+        LunaVN.listener.on("showMsgWindow", function () {
+          _gthis.vnShow();
+        });
+        LunaVN.listener.on("hideMsgWindow", function () {
+          _gthis.vnHide();
+        });
+        LunaVN.listener.on("fadeInMsgWindow", function () {
+          _gthis.vnFadeIn();
+        });
+        LunaVN.listener.on("fadeOutMsgWindow", function () {
+          _gthis.vnFadeOut();
+        });
+      };
+      let _Window_Message_update = Window_Message.prototype.update;
+      Window_Message.prototype.update = function () {
+        _Window_Message_update.call(this);
+        this.updateVNFade();
+      };
+      let _Window_Message_updateVNFade = Window_Message.prototype.updateVNFade;
+      Window_Message.prototype.updateVNFade = function () {
+        if (!this._shadowVNFadeComplete) {
+          let displayObj = this;
+          let shadowOpacity = this._shadowVNWinOpacity;
+          let opacityResult = displayObj.opacity;
+          if (shadowOpacity != displayObj.opacity) {
+            opacityResult = core_Amaryllis.lerp(
+              displayObj.opacity,
+              shadowOpacity,
+              0.045
+            );
+          }
+          if (Math.abs(shadowOpacity - displayObj.opacity) < 0.5) {
+            opacityResult = Math.round(opacityResult);
+          }
+          displayObj.opacity = opacityResult;
+          this.contentsOpacity = opacityResult;
+        }
+      };
+      let _Window_Message_vnFadeIn = Window_Message.prototype.vnFadeIn;
+      Window_Message.prototype.vnFadeIn = function () {
+        this._shadowVNFadeComplete = false;
+        this._shadowVNWinOpacity = 255;
+      };
+      let _Window_Message_vnFadeOut = Window_Message.prototype.vnFadeOut;
+      Window_Message.prototype.vnFadeOut = function () {
+        this._shadowVNFadeComplete = false;
+        this._shadowVNWinOpacity = 0;
+      };
+      let _Window_Message_vnShow = Window_Message.prototype.vnShow;
+      Window_Message.prototype.vnShow = function () {
+        this.show();
+      };
+      let _Window_Message_vnHide = Window_Message.prototype.vnHide;
+      Window_Message.prototype.vnHide = function () {
+        this.hide();
       };
       let pluginName = plugin.name;
       PluginManager.registerCommand(pluginName, "moveBustTo", function (
@@ -549,6 +664,60 @@ SOFTWARE
       ) {
         let params = JsonEx.parse(jsonParams);
       });
+      PluginManager.registerCommand(pluginName, "setBackdrop", function (
+        jsonParams
+      ) {
+        let params = JsonEx.parse(jsonParams);
+        LunaVN.setBackdrop(params.imageName);
+      });
+      PluginManager.registerCommand(pluginName, "showBackdrop", function (
+        jsonParams
+      ) {
+        let params = JsonEx.parse(jsonParams);
+        LunaVN.showBackdrop();
+      });
+      PluginManager.registerCommand(pluginName, "hideBackdrop", function (
+        jsonParams
+      ) {
+        let params = JsonEx.parse(jsonParams);
+        LunaVN.hideBackdrop();
+      });
+      PluginManager.registerCommand(pluginName, "setScreenPic", function (
+        jsonParams
+      ) {
+        let params = JsonEx.parse(jsonParams);
+        LunaVN.setScreenPic(params.imageName);
+      });
+      PluginManager.registerCommand(pluginName, "showScreenPic", function (
+        jsonParams
+      ) {
+        LunaVN.showScreenPic();
+      });
+      PluginManager.registerCommand(pluginName, "hideScreenPic", function (
+        jsonParams
+      ) {
+        LunaVN.hideScreenPic();
+      });
+      PluginManager.registerCommand(pluginName, "showMsgWindow", function (
+        jsonParams
+      ) {
+        LunaVN.showMsgWindow();
+      });
+      PluginManager.registerCommand(pluginName, "hideMsgWindow", function (
+        jsonParams
+      ) {
+        LunaVN.hideMsgWindow();
+      });
+      PluginManager.registerCommand(pluginName, "fadeInMsgWindow", function (
+        jsonParams
+      ) {
+        LunaVN.fadeInMsgWindow();
+      });
+      PluginManager.registerCommand(pluginName, "fadeOutMsgWindow", function (
+        jsonParams
+      ) {
+        LunaVN.fadeOutMsgWindow();
+      });
     }
     static params() {
       return LunaVN.Params;
@@ -621,6 +790,58 @@ SOFTWARE
       ) {
         JsonEx.parse(jsonParams);
       });
+      PluginManager.registerCommand(pluginName, "setBackdrop", function (
+        jsonParams
+      ) {
+        LunaVN.setBackdrop(JsonEx.parse(jsonParams).imageName);
+      });
+      PluginManager.registerCommand(pluginName, "showBackdrop", function (
+        jsonParams
+      ) {
+        JsonEx.parse(jsonParams);
+        LunaVN.showBackdrop();
+      });
+      PluginManager.registerCommand(pluginName, "hideBackdrop", function (
+        jsonParams
+      ) {
+        JsonEx.parse(jsonParams);
+        LunaVN.hideBackdrop();
+      });
+      PluginManager.registerCommand(pluginName, "setScreenPic", function (
+        jsonParams
+      ) {
+        LunaVN.setScreenPic(JsonEx.parse(jsonParams).imageName);
+      });
+      PluginManager.registerCommand(pluginName, "showScreenPic", function (
+        jsonParams
+      ) {
+        LunaVN.showScreenPic();
+      });
+      PluginManager.registerCommand(pluginName, "hideScreenPic", function (
+        jsonParams
+      ) {
+        LunaVN.hideScreenPic();
+      });
+      PluginManager.registerCommand(pluginName, "showMsgWindow", function (
+        jsonParams
+      ) {
+        LunaVN.showMsgWindow();
+      });
+      PluginManager.registerCommand(pluginName, "hideMsgWindow", function (
+        jsonParams
+      ) {
+        LunaVN.hideMsgWindow();
+      });
+      PluginManager.registerCommand(pluginName, "fadeInMsgWindow", function (
+        jsonParams
+      ) {
+        LunaVN.fadeInMsgWindow();
+      });
+      PluginManager.registerCommand(pluginName, "fadeOutMsgWindow", function (
+        jsonParams
+      ) {
+        LunaVN.fadeOutMsgWindow();
+      });
     }
     static moveBustTo(id, x, y) {
       LunaVN.listener.emit("moveBustTo", id, x, y);
@@ -673,6 +894,18 @@ SOFTWARE
     }
     static hideScreenPic() {
       LunaVN.listener.emit("hideScreenPic");
+    }
+    static showMsgWindow() {
+      LunaVN.listener.emit("showMsgWindow");
+    }
+    static hideMsgWindow() {
+      LunaVN.listener.emit("hideMsgWindow");
+    }
+    static fadeInMsgWindow() {
+      LunaVN.listener.emit("fadeInMsgWindow");
+    }
+    static fadeOutMsgWindow() {
+      LunaVN.listener.emit("fadeOutMsgWindow");
     }
   }
 
@@ -790,44 +1023,104 @@ SOFTWARE
       });
     }
     updateBackdrop() {
-      let opacityResult = this._lvnBackdropSprite.opacity;
-      if (this._shadowBackdropOpacity != this._lvnBackdropSprite.opacity) {
+      let shadowOpacity = this._shadowBackdropOpacity;
+      let displayObj = this._lvnBackdropSprite;
+      let opacityResult = displayObj.opacity;
+      if (shadowOpacity != displayObj.opacity) {
         opacityResult = core_Amaryllis.lerp(
-          this._lvnBackdropSprite.opacity,
-          this._shadowBackdropOpacity,
+          displayObj.opacity,
+          shadowOpacity,
           0.045
         );
       }
-      if (
-        Math.abs(
-          this._shadowBackdropOpacity - this._lvnBackdropSprite.opacity
-        ) < 0.5
-      ) {
+      if (Math.abs(shadowOpacity - displayObj.opacity) < 0.5) {
         opacityResult = Math.round(opacityResult);
       }
-      this._lvnBackdropSprite.opacity = opacityResult;
+      displayObj.opacity = opacityResult;
     }
     updateScreenSprite() {
-      let opacityResult = this._lvnScreenPicSprite.opacity;
-      if (this._shadowScreenPicOpacity != this._lvnScreenPicSprite.opacity) {
+      let shadowOpacity = this._shadowScreenPicOpacity;
+      let displayObj = this._lvnScreenPicSprite;
+      let opacityResult = displayObj.opacity;
+      if (shadowOpacity != displayObj.opacity) {
         opacityResult = core_Amaryllis.lerp(
-          this._lvnScreenPicSprite.opacity,
-          this._shadowScreenPicOpacity,
+          displayObj.opacity,
+          shadowOpacity,
           0.045
         );
       }
-      if (
-        Math.abs(
-          this._shadowScreenPicOpacity - this._lvnScreenPicSprite.opacity
-        ) < 0.5
-      ) {
+      if (Math.abs(shadowOpacity - displayObj.opacity) < 0.5) {
         opacityResult = Math.round(opacityResult);
       }
-      this._lvnScreenPicSprite.opacity = opacityResult;
+      displayObj.opacity = opacityResult;
     }
   }
 
   visnov_Scene_$Map.__name__ = true;
+  class visnov_Window_$Message extends Window_Message {
+    constructor(rect) {
+      super(rect);
+    }
+    initialize(rect) {
+      _Window_Message_initialize.call(this, rect);
+      this._shadowVNFadeComplete = true;
+      this.setupLVNEvents();
+    }
+    setupLVNEvents() {
+      let _gthis = this;
+      LunaVN.listener.on("showMsgWindow", function () {
+        _gthis.vnShow();
+      });
+      LunaVN.listener.on("hideMsgWindow", function () {
+        _gthis.vnHide();
+      });
+      LunaVN.listener.on("fadeInMsgWindow", function () {
+        _gthis.vnFadeIn();
+      });
+      LunaVN.listener.on("fadeOutMsgWindow", function () {
+        _gthis.vnFadeOut();
+      });
+    }
+    update() {
+      _Window_Message_update.call(this);
+      this.updateVNFade();
+    }
+    updateVNFade() {
+      if (!this._shadowVNFadeComplete) {
+        let displayObj = this;
+        let shadowOpacity = this._shadowVNWinOpacity;
+        let opacityResult = displayObj.opacity;
+        if (shadowOpacity != displayObj.opacity) {
+          opacityResult = core_Amaryllis.lerp(
+            displayObj.opacity,
+            shadowOpacity,
+            0.045
+          );
+        }
+        if (Math.abs(shadowOpacity - displayObj.opacity) < 0.5) {
+          opacityResult = Math.round(opacityResult);
+        }
+        displayObj.opacity = opacityResult;
+        this.contentsOpacity = opacityResult;
+      }
+    }
+    vnFadeIn() {
+      this._shadowVNFadeComplete = false;
+      this._shadowVNWinOpacity = 255;
+    }
+    vnFadeOut() {
+      this._shadowVNFadeComplete = false;
+      this._shadowVNWinOpacity = 0;
+    }
+    vnShow() {
+      this.show();
+    }
+    vnHide() {
+      this.hide();
+    }
+  }
+
+  visnov_Window_$Message.__name__ = true;
   var visnov_sprites_MoveType = ($hxEnums["visnov.sprites.MoveType"] = {
     __ename__: true,
     __constructs__: ["Linear"],

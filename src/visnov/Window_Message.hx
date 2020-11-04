@@ -1,5 +1,6 @@
 package visnov;
 
+import core.Amaryllis;
 import visnov.Types.VNSysEvents;
 import core.VNExtensions;
 import rm.core.Rectangle;
@@ -17,7 +18,7 @@ class Window_Message extends RmWindow_Message {
   }
   #else
   public override function initialize(rect: Rectangle) {
-    untyped _Window_Message_initialize.call(this);
+    untyped _Window_Message_initialize.call(this, rect);
     this._shadowVNFadeComplete = true;
     this.setupLVNEvents();
   }
@@ -46,19 +47,20 @@ class Window_Message extends RmWindow_Message {
   }
 
   public function updateVNFade() {
-    // var opacityResult = this.opacity;
     if (!this._shadowVNFadeComplete) {
-      VNExtensions.updateFade(this._shadowVNWinOpacity, cast this);
+      var displayObj = this;
+      var shadowOpacity = this._shadowVNWinOpacity;
+
+      var opacityResult = displayObj.opacity;
+      if (shadowOpacity != displayObj.opacity) {
+        opacityResult = Amaryllis.lerp(displayObj.opacity, shadowOpacity, 0.045);
+      }
+      if (Math.abs(shadowOpacity - displayObj.opacity) < 0.5) {
+        opacityResult = Math.round(opacityResult);
+      }
+      displayObj.opacity = opacityResult;
+      this.contentsOpacity = opacityResult;
     }
-    // if (!this._shadowVNFadeComplete && this._shadowVNWinOpacity != this.opacity) {
-    //   opacityResult = Amaryllis.lerp(this.opacity, this._shadowVNWinOpacity, 0.045);
-
-    // }
-    // if (Math.abs(this._shadowBackdropOpacity - this._lvnBackdropSprite.opacity) < 0.5) {
-    //   opacityResult = Math.round(opacityResult);
-    // }
-
-    // this.opacity = opacityResult;
   }
 
   public function vnFadeIn() {
