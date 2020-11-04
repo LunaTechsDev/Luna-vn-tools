@@ -4,10 +4,6 @@
 
 @target MV MZ
 
-@command callEvent
-@text Call Event
-@desc Allows you to call an event from any map with any event ID
-
 @param bustLimit
 @text Bust Limit
 @desc The limit of how many busts to show on screen at one time.
@@ -19,6 +15,36 @@ the new one.
 @text Breathing Animation
 @desc Whether the busts will have a breathing animation when on screen.
 @default true
+
+@command moveBustTo
+@text Move Bust To
+@desc Allows you to call an event from any map with any event ID
+
+@command setScreenPic
+@text Set Screen Picture
+@desc Sets the screen picture for your visual novel scene.
+
+@command showScreenPic
+@text Show Screen Picture
+@desc Shows the screen picture for your visual novel scene.
+
+@command hideScreenPic
+@text Hide Screen Picture
+@desc Hides the screen picture for your visual novel.
+
+@command setBackdrop
+@text Set Backdrop
+@desc Sets the new backdrop image for your visual novel scene.
+
+@command showBackdrop
+@text Show Backdrop
+@desc Shows the backdrop for the Visual Novel scene for the user.
+
+@command hideBackdrop
+@text Hide Backdrop
+@desc Allows you to hide the backdrop when working with your Visual Novel.
+
+
 
 @help
 ==== How To Use ====
