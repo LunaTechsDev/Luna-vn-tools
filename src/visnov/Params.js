@@ -4,6 +4,11 @@
 
 @target MV MZ
 
+@param enableWordWrap
+@text Enable Word Wrap
+@desc Enables word wrapping support in RPGMakerMV/MZ (true/false)
+@default true
+
 @param msgWindowX
 @text Message Window X
 @desc The X position of the message window.

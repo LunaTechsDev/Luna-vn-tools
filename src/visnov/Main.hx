@@ -30,7 +30,8 @@ class Main {
       msgWindowX: Fn.parseIntJs(params['msgWindowX']),
       msgWindowY: Fn.parseIntJs(params['msgWindowY']),
       msgWindowWidth: Fn.parseIntJs(params['msgWindowWidth']),
-      msgWindowHeight: Fn.parseIntJs(params['msgWindowHeight'])
+      msgWindowHeight: Fn.parseIntJs(params['msgWindowHeight']),
+      enableWordWrap: params['enableWordWrap'].trim() == 'true',
     };
 
     trace(Params);

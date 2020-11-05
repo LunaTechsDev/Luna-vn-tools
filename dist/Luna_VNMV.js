@@ -15,6 +15,11 @@
 
 @target MV MZ
 
+@param enableWordWrap
+@text Enable Word Wrap
+@desc Enables word wrapping support in RPGMakerMV/MZ (true/false)
+@default true
+
 @param msgWindowX
 @text Message Window X
 @desc The X position of the message window.
@@ -363,10 +368,11 @@ SOFTWARE
         msgWindowY: parseInt(params["msgWindowY"], 10),
         msgWindowWidth: parseInt(params["msgWindowWidth"], 10),
         msgWindowHeight: parseInt(params["msgWindowHeight"], 10),
+        enableWordWrap: params["enableWordWrap"].trim() == "true",
       };
       haxe_Log.trace(LunaVN.Params, {
         fileName: "src/visnov/Main.hx",
-        lineNumber: 36,
+        lineNumber: 37,
         className: "visnov.Main",
         methodName: "main",
       });
@@ -633,51 +639,12 @@ SOFTWARE
           this.contentsOpacity = opacityResult;
         }
       };
-      let _Window_Message_drawTextEx = Window_Message.prototype.drawTextEx;
-      Window_Message.prototype.drawTextEx = function (text, x, y) {
-        if (text) {
-          let textState = {
-            index: 0,
-            x: x,
-            y: y,
-            left: x,
-            text: "",
-            height: 0,
-          };
-          textState.text = this.convertEscapeCharacters(text);
-          textState.height = this.calcTextHeight(textState, false);
-          this.resetFontSettings();
-          while (textState.index < textState.text.length) {
-            let textUpToIndex = textState.text.substring(0, textState.index);
-            if (
-              this.textWidth(textUpToIndex) > this.contentsWidth() &&
-              textUpToIndex.charAt(textState.index) != "\n"
-            ) {
-              textState.text =
-                textUpToIndex +
-                "\n" +
-                textState.text.substring(
-                  textState.index,
-                  textState.text.length - 1
-                );
-              haxe_Log.trace(textState.text, {
-                fileName: "src/visnov/Window_Message.hx",
-                lineNumber: 102,
-                className: "visnov.Window_Message",
-                methodName: "drawTextEx",
-              });
-            }
-            this.processCharacter(textState);
-          }
-          return textState.x - x;
-        } else {
-          return 0;
-        }
-      };
       let _Window_Message_startMessage = Window_Message.prototype.startMessage;
       Window_Message.prototype.startMessage = function () {
         _Window_Message_startMessage.call(this);
-        this.vnUpdateTextState(this._textState);
+        if (LunaVN.Params.enableWordWrap) {
+          this.vnUpdateTextState(this._textState);
+        }
       };
       let _Window_Message_vnUpdateTextState =
         Window_Message.prototype.vnUpdateTextState;
@@ -703,7 +670,7 @@ SOFTWARE
               ++spaceOffset;
               haxe_Log.trace("Processing Text Offset", {
                 fileName: "src/visnov/Window_Message.hx",
-                lineNumber: 141,
+                lineNumber: 98,
                 className: "visnov.Window_Message",
                 methodName: "vnUpdateTextState",
                 customParams: [spaceOffset],
@@ -1018,7 +985,9 @@ SOFTWARE
     }
     startMessage() {
       _Window_Message_startMessage.call(this);
-      this.vnUpdateTextState(this._textState);
+      if (LunaVN.Params.enableWordWrap) {
+        this.vnUpdateTextState(this._textState);
+      }
     }
     vnUpdateTextState(originalTextState) {
       let textState = originalTextState;
@@ -1040,7 +1009,7 @@ SOFTWARE
             ++spaceOffset;
             haxe_Log.trace("Processing Text Offset", {
               fileName: "src/visnov/Window_Message.hx",
-              lineNumber: 141,
+              lineNumber: 98,
               className: "visnov.Window_Message",
               methodName: "vnUpdateTextState",
               customParams: [spaceOffset],

@@ -15,6 +15,11 @@
 
 @target MV MZ
 
+@param enableWordWrap
+@text Enable Word Wrap
+@desc Enables word wrapping support in RPGMakerMV/MZ (true/false)
+@default true
+
 @param msgWindowX
 @text Message Window X
 @desc The X position of the message window.
@@ -363,10 +368,11 @@ SOFTWARE
         msgWindowY: parseInt(params["msgWindowY"], 10),
         msgWindowWidth: parseInt(params["msgWindowWidth"], 10),
         msgWindowHeight: parseInt(params["msgWindowHeight"], 10),
+        enableWordWrap: params["enableWordWrap"].trim() == "true",
       };
       haxe_Log.trace(LunaVN.Params, {
         fileName: "src/visnov/Main.hx",
-        lineNumber: 36,
+        lineNumber: 37,
         className: "visnov.Main",
         methodName: "main",
       });
@@ -634,17 +640,12 @@ SOFTWARE
           this.contentsOpacity = opacityResult;
         }
       };
-      let _Window_Message_drawTextEx = Window_Message.prototype.drawTextEx;
-      Window_Message.prototype.drawTextEx = function (text, x, y, width) {
-        this.resetFontSettings();
-        let textState = this.createTextState(text, x, y, width);
-        this.processAllText(textState);
-        return textState.outputWidth;
-      };
       let _Window_Message_startMessage = Window_Message.prototype.startMessage;
       Window_Message.prototype.startMessage = function () {
         _Window_Message_startMessage.call(this);
-        this.vnUpdateTextState(this._textState);
+        if (LunaVN.Params.enableWordWrap) {
+          this.vnUpdateTextState(this._textState);
+        }
       };
       let _Window_Message_vnUpdateTextState =
         Window_Message.prototype.vnUpdateTextState;
@@ -670,7 +671,7 @@ SOFTWARE
               ++spaceOffset;
               haxe_Log.trace("Processing Text Offset", {
                 fileName: "src/visnov/Window_Message.hx",
-                lineNumber: 141,
+                lineNumber: 98,
                 className: "visnov.Window_Message",
                 methodName: "vnUpdateTextState",
                 customParams: [spaceOffset],
@@ -1222,7 +1223,9 @@ SOFTWARE
     }
     startMessage() {
       _Window_Message_startMessage.call(this);
-      this.vnUpdateTextState(this._textState);
+      if (LunaVN.Params.enableWordWrap) {
+        this.vnUpdateTextState(this._textState);
+      }
     }
     vnUpdateTextState(originalTextState) {
       let textState = originalTextState;
@@ -1244,7 +1247,7 @@ SOFTWARE
             ++spaceOffset;
             haxe_Log.trace("Processing Text Offset", {
               fileName: "src/visnov/Window_Message.hx",
-              lineNumber: 141,
+              lineNumber: 98,
               className: "visnov.Window_Message",
               methodName: "vnUpdateTextState",
               customParams: [spaceOffset],

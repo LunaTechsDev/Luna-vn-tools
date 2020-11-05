@@ -77,7 +77,9 @@ class Window_Message extends RmWindow_Message {
 
   public override function startMessage() {
     untyped _Window_Message_startMessage.call(this);
-    this.vnUpdateTextState(this._textState);
+    if (Main.Params.enableWordWrap) {
+      this.vnUpdateTextState(this._textState);
+    }
   }
 
   // Word Wrap Support
