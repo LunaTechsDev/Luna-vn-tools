@@ -270,6 +270,33 @@ class EventBuilder {
     return this;
   }
 
+  public function changeNickname(actorId: Int, nickname: String) {
+    this._commands.push({
+      code: CHANGENICKNAME,
+      indent: this._currentIndentLvl,
+      parameters: [actorId, nickname],
+    });
+    return this;
+  }
+
+  public function eraseEvent() {
+    this._commands.push({
+      code: ERASEEVENT,
+      indent: this._currentIndentLvl,
+      parameters: []
+    });
+    return this;
+  }
+
+  public function gatherFollowers() {
+    this._commands.push({
+      code: GATHERFOLLOWERS,
+      indent: this._currentIndentLvl,
+      parameters: []
+    });
+    return this;
+  }
+
   public function openSave() {
     this._commands.push({
       code: OPENSAVE,

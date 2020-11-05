@@ -77,6 +77,7 @@ enum abstract EventCode(Int) from Int to Int {
   public var BOARDVEHICLE = 206;
   public var SHOWBALLOON = 213;
   public var ERASEEVENT = 214;
+  public var GATHERFOLLOWERS = 217;
   public var FADEOUTSCREEN = 221;
   public var FADEINSCREEN = 222;
   public var TINTSCREEN = 223;
