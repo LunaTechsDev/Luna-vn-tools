@@ -7,18 +7,22 @@
 @param msgWindowX
 @text Message Window X
 @desc The X position of the message window.
+@default 100
 
 @param msgWindowY
 @text Message Window Y
 @desc The Y position of the message window.
+@default 400
 
 @param msgWindowWidth
 @text Message Window Width
 @desc The width of the message window.
+@default 600
 
 @param msgWindowHeight
 @text Message Window Height
 @desc The height of the message window.
+@default 250
 
 @param bustLimit
 @text Bust Limit

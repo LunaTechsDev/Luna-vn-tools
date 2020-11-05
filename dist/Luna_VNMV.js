@@ -2,7 +2,7 @@
  *
  *  Luna_VNMV.js
  * 
- *  Build Date: 11/3/2020
+ *  Build Date: 11/4/2020
  * 
  *  Made with LunaTea -- Haxe
  *
@@ -14,6 +14,26 @@
 @plugindesc A plugin that adds Visual Novel support in MV/MZ <LunaVN>. 
 
 @target MV MZ
+
+@param msgWindowX
+@text Message Window X
+@desc The X position of the message window.
+@default 100
+
+@param msgWindowY
+@text Message Window Y
+@desc The Y position of the message window.
+@default 400
+
+@param msgWindowWidth
+@text Message Window Width
+@desc The width of the message window.
+@default 600
+
+@param msgWindowHeight
+@text Message Window Height
+@desc The height of the message window.
+@default 250
 
 @param bustLimit
 @text Bust Limit
@@ -119,6 +139,20 @@ SOFTWARE
   }
 
   EReg.__name__ = true;
+  class HxOverrides {
+    static cca(s, index) {
+      let x = s.charCodeAt(index);
+      if (x != x) {
+        return undefined;
+      }
+      return x;
+    }
+    static now() {
+      return Date.now();
+    }
+  }
+
+  HxOverrides.__name__ = true;
   Math.__name__ = true;
   class Std {
     static string(s) {
@@ -127,6 +161,18 @@ SOFTWARE
   }
 
   Std.__name__ = true;
+  class StringTools {
+    static isSpace(s, pos) {
+      let c = HxOverrides.cca(s, pos);
+      if (!(c > 8 && c < 14)) {
+        return c == 32;
+      } else {
+        return true;
+      }
+    }
+  }
+
+  StringTools.__name__ = true;
   class core_Amaryllis {
     static lerp(start, end, amount) {
       return start + (end - start) * amount;
@@ -313,10 +359,14 @@ SOFTWARE
       LunaVN.Params = {
         bustLimit: parseInt(params["bustLimit"], 10),
         breathingAnim: params["breathingAnim"].toLowerCase().trim() == "true",
+        msgWindowX: parseInt(params["msgWindowX"], 10),
+        msgWindowY: parseInt(params["msgWindowY"], 10),
+        msgWindowWidth: parseInt(params["msgWindowWidth"], 10),
+        msgWindowHeight: parseInt(params["msgWindowHeight"], 10),
       };
       haxe_Log.trace(LunaVN.Params, {
         fileName: "src/visnov/Main.hx",
-        lineNumber: 32,
+        lineNumber: 36,
         className: "visnov.Main",
         methodName: "main",
       });
@@ -528,7 +578,16 @@ SOFTWARE
       Window_Message.prototype._shadowVNFadeComplete = null;
       let _Window_Message_initialize = Window_Message.prototype.initialize;
       Window_Message.prototype.initialize = function () {
-        _Window_Message_intiailize.call(this);
+        let params = LunaVN.Params;
+        let width = params.msgWindowWidth;
+        let height = params.msgWindowHeight;
+        let x = params.msgWindowX;
+        let y = params.msgWindowY;
+        this.openness = 0;
+        this.initMembers();
+        this.createSubWindows();
+        this.updatePlacement();
+        _Window_Message_intiailize.call(this, x, y, width, height);
         this._shadowVNFadeComplete = true;
         this.setupLVNEvents();
       };
@@ -573,6 +632,96 @@ SOFTWARE
           displayObj.opacity = opacityResult;
           this.contentsOpacity = opacityResult;
         }
+      };
+      let _Window_Message_drawTextEx = Window_Message.prototype.drawTextEx;
+      Window_Message.prototype.drawTextEx = function (text, x, y) {
+        if (text) {
+          let textState = {
+            index: 0,
+            x: x,
+            y: y,
+            left: x,
+            text: "",
+            height: 0,
+          };
+          textState.text = this.convertEscapeCharacters(text);
+          textState.height = this.calcTextHeight(textState, false);
+          this.resetFontSettings();
+          while (textState.index < textState.text.length) {
+            let textUpToIndex = textState.text.substring(0, textState.index);
+            if (
+              this.textWidth(textUpToIndex) > this.contentsWidth() &&
+              textUpToIndex.charAt(textState.index) != "\n"
+            ) {
+              textState.text =
+                textUpToIndex +
+                "\n" +
+                textState.text.substring(
+                  textState.index,
+                  textState.text.length - 1
+                );
+              haxe_Log.trace(textState.text, {
+                fileName: "src/visnov/Window_Message.hx",
+                lineNumber: 102,
+                className: "visnov.Window_Message",
+                methodName: "drawTextEx",
+              });
+            }
+            this.processCharacter(textState);
+          }
+          return textState.x - x;
+        } else {
+          return 0;
+        }
+      };
+      let _Window_Message_startMessage = Window_Message.prototype.startMessage;
+      Window_Message.prototype.startMessage = function () {
+        _Window_Message_startMessage.call(this);
+        this.vnUpdateTextState(this._textState);
+      };
+      let _Window_Message_vnUpdateTextState =
+        Window_Message.prototype.vnUpdateTextState;
+      Window_Message.prototype.vnUpdateTextState = function (
+        originalTextState
+      ) {
+        let textState = originalTextState;
+        let length = originalTextState.text.length;
+        while (originalTextState.index < length) {
+          let currentLines = textState.text
+            .substring(0, textState.index + 1)
+            .split("\n");
+          let latestLine = currentLines[currentLines.length - 1];
+          let textUpToIndex = latestLine.substring(0, latestLine.length);
+          if (this.textWidth(textUpToIndex) > this.contentsWidth()) {
+            let spaceOffset = 1;
+            while (
+              !StringTools.isSpace(
+                textUpToIndex,
+                textUpToIndex.length - spaceOffset
+              )
+            ) {
+              ++spaceOffset;
+              haxe_Log.trace("Processing Text Offset", {
+                fileName: "src/visnov/Window_Message.hx",
+                lineNumber: 141,
+                className: "visnov.Window_Message",
+                methodName: "vnUpdateTextState",
+                customParams: [spaceOffset],
+              });
+            }
+            let textWithBreak = textState.text.substring(
+              0,
+              textState.index - (spaceOffset - 1)
+            );
+            let textAfterBreak = textState.text.substring(
+              textState.index - (spaceOffset - 2),
+              textState.text.length
+            );
+            textState.text = textWithBreak + "\n" + textAfterBreak;
+          }
+          originalTextState.index++;
+        }
+        originalTextState.index = 0;
       };
       let _Window_Message_vnFadeIn = Window_Message.prototype.vnFadeIn;
       Window_Message.prototype.vnFadeIn = function () {
@@ -816,7 +965,16 @@ SOFTWARE
       super(x, y, width, height);
     }
     initialize() {
-      _Window_Message_intiailize.call(this);
+      let params = LunaVN.Params;
+      let width = params.msgWindowWidth;
+      let height = params.msgWindowHeight;
+      let x = params.msgWindowX;
+      let y = params.msgWindowY;
+      this.openness = 0;
+      this.initMembers();
+      this.createSubWindows();
+      this.updatePlacement();
+      _Window_Message_intiailize.call(this, x, y, width, height);
       this._shadowVNFadeComplete = true;
       this.setupLVNEvents();
     }
@@ -857,6 +1015,50 @@ SOFTWARE
         displayObj.opacity = opacityResult;
         this.contentsOpacity = opacityResult;
       }
+    }
+    startMessage() {
+      _Window_Message_startMessage.call(this);
+      this.vnUpdateTextState(this._textState);
+    }
+    vnUpdateTextState(originalTextState) {
+      let textState = originalTextState;
+      let length = originalTextState.text.length;
+      while (originalTextState.index < length) {
+        let currentLines = textState.text
+          .substring(0, textState.index + 1)
+          .split("\n");
+        let latestLine = currentLines[currentLines.length - 1];
+        let textUpToIndex = latestLine.substring(0, latestLine.length);
+        if (this.textWidth(textUpToIndex) > this.contentsWidth()) {
+          let spaceOffset = 1;
+          while (
+            !StringTools.isSpace(
+              textUpToIndex,
+              textUpToIndex.length - spaceOffset
+            )
+          ) {
+            ++spaceOffset;
+            haxe_Log.trace("Processing Text Offset", {
+              fileName: "src/visnov/Window_Message.hx",
+              lineNumber: 141,
+              className: "visnov.Window_Message",
+              methodName: "vnUpdateTextState",
+              customParams: [spaceOffset],
+            });
+          }
+          let textWithBreak = textState.text.substring(
+            0,
+            textState.index - (spaceOffset - 1)
+          );
+          let textAfterBreak = textState.text.substring(
+            textState.index - (spaceOffset - 2),
+            textState.text.length
+          );
+          textState.text = textWithBreak + "\n" + textAfterBreak;
+        }
+        originalTextState.index++;
+      }
+      originalTextState.index = 0;
     }
     vnFadeIn() {
       this._shadowVNFadeComplete = false;
@@ -1018,6 +1220,13 @@ SOFTWARE
 
   $hx_exports["LVNSpriteBust"] = LVNSpriteBust;
   LVNSpriteBust.__name__ = true;
+  if (
+    typeof performance != "undefined"
+      ? typeof performance.now == "function"
+      : false
+  ) {
+    HxOverrides.now = performance.now.bind(performance);
+  }
   String.__name__ = true;
   Array.__name__ = true;
   Date.__name__ = "Date";

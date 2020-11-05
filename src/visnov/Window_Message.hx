@@ -1,9 +1,13 @@
 package visnov;
 
+import js.lib.Object;
+import rm.types.RM.TextState;
 import core.Amaryllis;
 import visnov.Types.VNSysEvents;
 import rm.core.Rectangle;
 import rm.windows.Window_Message as RmWindow_Message;
+
+using StringTools;
 
 class Window_Message extends RmWindow_Message {
   public var _shadowVNWinOpacity: Float;
@@ -11,7 +15,7 @@ class Window_Message extends RmWindow_Message {
 
   #if compileMV
   public override function initialize() {
-    var params = Main.params;
+    var params = Main.Params;
     var width = params.msgWindowWidth;
     var height = params.msgWindowHeight;
     var x = params.msgWindowX;
@@ -69,6 +73,37 @@ class Window_Message extends RmWindow_Message {
       displayObj.opacity = opacityResult;
       this.contentsOpacity = opacityResult;
     }
+  }
+
+  public override function startMessage() {
+    untyped _Window_Message_startMessage.call(this);
+    this.vnUpdateTextState(this._textState);
+  }
+
+  // Word Wrap Support
+  public function vnUpdateTextState(originalTextState: TextState) {
+    var textState = originalTextState;
+    var length = originalTextState.text.length;
+    while (originalTextState.index < length) {
+      var currentLines = textState.text.substring(0, textState.index + 1).split('\n');
+      var latestLine = currentLines[currentLines.length - 1];
+      var textUpToIndex = latestLine.substring(0, latestLine.length);
+      if (untyped textWidth(textUpToIndex) > this.contentsWidth()) {
+        // Look for last space on the latestLine to break on word
+        var spaceOffset = 1;
+        while (!textUpToIndex.isSpace(textUpToIndex.length - spaceOffset)) {
+          spaceOffset += 1;
+          trace('Processing Text Offset', spaceOffset);
+        }
+        // Adjusting for the initial space offset
+        var textWithBreak = textState.text.substring(0, textState.index - (spaceOffset - 1));
+        // Adjusting for the space we found
+        var textAfterBreak = textState.text.substring(textState.index - (spaceOffset - 2), textState.text.length);
+        textState.text = textWithBreak + '\n' + textAfterBreak;
+      }
+      originalTextState.index++;
+    }
+    originalTextState.index = 0;
   }
 
   public function vnFadeIn() {
