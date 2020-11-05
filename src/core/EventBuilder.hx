@@ -180,6 +180,33 @@ class EventBuilder {
     return this;
   }
 
+  public function fadeOutBgm(frames: Int) {
+    this._commands.push({
+      code: FADEOUTBGM,
+      indent: this._currentIndentLvl,
+      parameters: [frames]
+    });
+    return this;
+  }
+
+  public function resumeBgm() {
+    this._commands.push({
+      code: REPLAYBGM,
+      indent: this._currentIndentLvl,
+      parameters: []
+    });
+    return this;
+  }
+
+  public function saveBgm() {
+    this._commands.push({
+      code: SAVEBGM,
+      indent: this._currentIndentLvl,
+      parameters: []
+    });
+    return this;
+  }
+
   public function playMe(name: String, volume: Int = 100, pitch: Int = 100, pan: Int = 0) {
     this._commands.push({
       code: PLAYME,
@@ -203,6 +230,42 @@ class EventBuilder {
       code: STOPSE,
       indent: this._currentIndentLvl,
       parameters: []
+    });
+    return this;
+  }
+
+  public function playMovie(name: String) {
+    this._commands.push({
+      code: PLAYMOVIE,
+      indent: this._currentIndentLvl,
+      parameters: [name]
+    });
+    return this;
+  }
+
+  public function changeMapName(name: String) {
+    this._commands.push({
+      code: CHANGEMAPNAME,
+      indent: this._currentIndentLvl,
+      parameters: [name]
+    });
+    return this;
+  }
+
+  public function changeTileset(tilesetId: Int) {
+    this._commands.push({
+      code: CHANGETILESET,
+      indent: this._currentIndentLvl,
+      parameters: [tilesetId]
+    });
+    return this;
+  }
+
+  public function changeBattleBack(battleBack1: String, battleBack2: String) {
+    this._commands.push({
+      code: CHANGEBATTLEBACK,
+      indent: this._currentIndentLvl,
+      parameters: [battleBack1, battleBack2]
     });
     return this;
   }
