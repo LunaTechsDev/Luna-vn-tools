@@ -11,6 +11,11 @@
 @desc Enables word wrapping support in RPGMakerMV/MZ (true/false)
 @default true
 
+@param removeManualLineBreaks
+@text Remove Manual Line Breaks
+@desc Removes new lines in your text before it is word wrapped(true/false)
+@default true
+
 @param msgWindowX
 @text Message Window X
 @desc The X position of the message window.

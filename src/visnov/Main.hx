@@ -34,6 +34,7 @@ class Main {
       msgWindowWidth: Fn.parseIntJs(params['msgWindowWidth']),
       msgWindowHeight: Fn.parseIntJs(params['msgWindowHeight']),
       enableWordWrap: params['enableWordWrap'].trim() == 'true',
+      removeManualLineBreaks: params['removeManualLineBreaks'].trim() == 'true'
     };
 
     trace(Params);

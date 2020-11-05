@@ -84,7 +84,11 @@ class Window_Message extends RmWindow_Message {
 
   // Word Wrap Support
   public function vnUpdateTextState(originalTextState: TextState) {
+    if (Main.Params.removeManualLineBreaks) {
+      originalTextState.text = originalTextState.text.replace('\n', ' ');
+    }
     var textState = originalTextState;
+
     var length = originalTextState.text.length;
     while (originalTextState.index < length) {
       var currentLines = textState.text.substring(0, textState.index + 1).split('\n');

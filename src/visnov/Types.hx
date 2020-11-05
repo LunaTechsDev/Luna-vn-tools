@@ -10,6 +10,7 @@ typedef VNParams = {
   var msgWindowWidth: Float;
   var msgWindowHeight: Float;
   var enableWordWrap: Bool;
+  var removeManualLineBreaks: Bool;
 };
 
 enum abstract BustEvents(String) from String to String {

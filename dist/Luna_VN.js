@@ -2,7 +2,7 @@
  *
  *  Luna_VN.js
  * 
- *  Build Date: 11/4/2020
+ *  Build Date: 11/5/2020
  * 
  *  Made with LunaTea -- Haxe
  *
@@ -20,6 +20,11 @@
 @param enableWordWrap
 @text Enable Word Wrap
 @desc Enables word wrapping support in RPGMakerMV/MZ (true/false)
+@default true
+
+@param removeManualLineBreaks
+@text Remove Manual Line Breaks
+@desc Removes new lines in your text before it is word wrapped(true/false)
 @default true
 
 @param msgWindowX
@@ -186,6 +191,9 @@ SOFTWARE
       } else {
         return true;
       }
+    }
+    static replace(s, sub, by) {
+      return s.split(sub).join(by);
     }
   }
 
@@ -383,10 +391,12 @@ SOFTWARE
         msgWindowWidth: parseInt(params["msgWindowWidth"], 10),
         msgWindowHeight: parseInt(params["msgWindowHeight"], 10),
         enableWordWrap: params["enableWordWrap"].trim() == "true",
+        removeManualLineBreaks:
+          params["removeManualLineBreaks"].trim() == "true",
       };
       haxe_Log.trace(LunaVN.Params, {
         fileName: "src/visnov/Main.hx",
-        lineNumber: 39,
+        lineNumber: 40,
         className: "visnov.Main",
         methodName: "main",
       });
@@ -666,6 +676,13 @@ SOFTWARE
       Window_Message.prototype.vnUpdateTextState = function (
         originalTextState
       ) {
+        if (LunaVN.Params.removeManualLineBreaks) {
+          originalTextState.text = StringTools.replace(
+            originalTextState.text,
+            "\n",
+            " "
+          );
+        }
         let textState = originalTextState;
         let length = originalTextState.text.length;
         while (originalTextState.index < length) {
@@ -685,7 +702,7 @@ SOFTWARE
               ++spaceOffset;
               haxe_Log.trace("Processing Text Offset", {
                 fileName: "src/visnov/Window_Message.hx",
-                lineNumber: 98,
+                lineNumber: 102,
                 className: "visnov.Window_Message",
                 methodName: "vnUpdateTextState",
                 customParams: [spaceOffset],
@@ -1246,6 +1263,13 @@ SOFTWARE
       }
     }
     vnUpdateTextState(originalTextState) {
+      if (LunaVN.Params.removeManualLineBreaks) {
+        originalTextState.text = StringTools.replace(
+          originalTextState.text,
+          "\n",
+          " "
+        );
+      }
       let textState = originalTextState;
       let length = originalTextState.text.length;
       while (originalTextState.index < length) {
@@ -1265,7 +1289,7 @@ SOFTWARE
             ++spaceOffset;
             haxe_Log.trace("Processing Text Offset", {
               fileName: "src/visnov/Window_Message.hx",
-              lineNumber: 98,
+              lineNumber: 102,
               className: "visnov.Window_Message",
               methodName: "vnUpdateTextState",
               customParams: [spaceOffset],
