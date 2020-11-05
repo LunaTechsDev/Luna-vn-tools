@@ -4,6 +4,8 @@
 
 @target MV MZ
 
+
+
 @param enableWordWrap
 @text Enable Word Wrap
 @desc Enables word wrapping support in RPGMakerMV/MZ (true/false)
@@ -28,6 +30,16 @@
 @text Message Window Height
 @desc The height of the message window.
 @default 250
+
+@param bustWidth
+@text Bust Width
+@desc Width of the bust on the screen 
+@default 125
+
+@param bustHeight
+@text Bust Height
+@desc Height of the bust on the screen
+@default 225
 
 @param bustLimit
 @text Bust Limit

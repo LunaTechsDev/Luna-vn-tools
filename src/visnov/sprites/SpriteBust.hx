@@ -39,12 +39,24 @@ public function new(x: Int, y: Int, ?bitmap: Bitmap) {
 }
 
 public function setBust(bustSetName: String) {
-  this.bitmap = ImageManager.loadPicture(bustSetName, 0);
-  handleLoading(this.bitmap);
+  var bustBitmap = ImageManager.loadPicture(bustSetName, 0);
+  handleLoading(bustBitmap);
 }
 
 public function handleLoading(bitmap: Bitmap) {
   bitmap.addLoadListener((bitmap) -> {
+    this.bitmap = new Bitmap(Main.Params.bustWidth, Main.Params.bustHeight);
+    this.bitmap.blt(
+      bitmap,
+      0,
+      0,
+      bitmap.width,
+      bitmap.height,
+      0,
+      0,
+      Main.Params.bustWidth,
+      Main.Params.bustHeight
+    );
     trace('Loaded Sprite Bust');
     this.show();
   });

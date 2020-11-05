@@ -15,6 +15,8 @@
 
 @target MV MZ
 
+
+
 @param enableWordWrap
 @text Enable Word Wrap
 @desc Enables word wrapping support in RPGMakerMV/MZ (true/false)
@@ -39,6 +41,16 @@
 @text Message Window Height
 @desc The height of the message window.
 @default 250
+
+@param bustWidth
+@text Bust Width
+@desc Width of the bust on the screen 
+@default 125
+
+@param bustHeight
+@text Bust Height
+@desc Height of the bust on the screen
+@default 225
 
 @param bustLimit
 @text Bust Limit
@@ -364,6 +376,8 @@ SOFTWARE
       LunaVN.Params = {
         bustLimit: parseInt(params["bustLimit"], 10),
         breathingAnim: params["breathingAnim"].toLowerCase().trim() == "true",
+        bustWidth: parseInt(params["bustWidth"], 10),
+        bustHeight: parseInt(params["bustHeight"], 10),
         msgWindowX: parseInt(params["msgWindowX"], 10),
         msgWindowY: parseInt(params["msgWindowY"], 10),
         msgWindowWidth: parseInt(params["msgWindowWidth"], 10),
@@ -372,7 +386,7 @@ SOFTWARE
       };
       haxe_Log.trace(LunaVN.Params, {
         fileName: "src/visnov/Main.hx",
-        lineNumber: 37,
+        lineNumber: 39,
         className: "visnov.Main",
         methodName: "main",
       });
@@ -449,7 +463,7 @@ SOFTWARE
         let _g1 = LunaVN.Params.bustLimit;
         while (_g < _g1) {
           let index = _g++;
-          let bust = new LVNSpriteBust(0, 0);
+          let bust = new LVNSpriteBust(0, this._messageWindow.height * -1);
           this.setupBustEvents(bust);
           this._lvnBusts.push(bust);
           this._messageWindow.addChild(bust);
@@ -780,6 +794,7 @@ SOFTWARE
         jsonParams
       ) {
         let params = JsonEx.parse(jsonParams);
+        LunaVN.setBust(params.id, params.bustSetName);
       });
       PluginManager.registerCommand(pluginName, "setBackdrop", function (
         jsonParams
@@ -905,7 +920,8 @@ SOFTWARE
       PluginManager.registerCommand(pluginName, "setBust", function (
         jsonParams
       ) {
-        JsonEx.parse(jsonParams);
+        let params = JsonEx.parse(jsonParams);
+        LunaVN.setBust(params.id, params.bustSetName);
       });
       PluginManager.registerCommand(pluginName, "setBackdrop", function (
         jsonParams
@@ -993,7 +1009,9 @@ SOFTWARE
     static darkenBust(id) {
       LunaVN.listener.emit("darkenBust", id);
     }
-    static setBust(id, bustSetName) {}
+    static setBust(id, bustSetName) {
+      LunaVN.listener.emit("setBust", id, bustSetName);
+    }
     static setBackdrop(imageName) {
       LunaVN.listener.emit("setBackdrop", imageName);
     }
@@ -1065,7 +1083,7 @@ SOFTWARE
       let _g1 = LunaVN.Params.bustLimit;
       while (_g < _g1) {
         ++_g;
-        let bust = new LVNSpriteBust(0, 0);
+        let bust = new LVNSpriteBust(0, this._messageWindow.height * -1);
         this.setupBustEvents(bust);
         this._lvnBusts.push(bust);
         this._messageWindow.addChild(bust);
@@ -1306,15 +1324,29 @@ SOFTWARE
       this._moveWait = 30;
     }
     setBust(bustSetName) {
-      this.bitmap = ImageManager.loadPicture(bustSetName, 0);
-      this.handleLoading(this.bitmap);
+      this.handleLoading(ImageManager.loadPicture(bustSetName, 0));
     }
     handleLoading(bitmap) {
       let _gthis = this;
       bitmap.addLoadListener(function (bitmap) {
+        _gthis.bitmap = new Bitmap(
+          LunaVN.Params.bustWidth,
+          LunaVN.Params.bustHeight
+        );
+        _gthis.bitmap.blt(
+          bitmap,
+          0,
+          0,
+          bitmap.width,
+          bitmap.height,
+          0,
+          0,
+          LunaVN.Params.bustWidth,
+          LunaVN.Params.bustHeight
+        );
         haxe_Log.trace("Loaded Sprite Bust", {
           fileName: "src/visnov/sprites/SpriteBust.hx",
-          lineNumber: 48,
+          lineNumber: 60,
           className: "visnov.sprites.SpriteBust",
           methodName: "handleLoading",
         });
@@ -1337,7 +1369,7 @@ SOFTWARE
       this._moveWait = 30;
       haxe_Log.trace("Starting Move", {
         fileName: "src/visnov/sprites/SpriteBust.hx",
-        lineNumber: 74,
+        lineNumber: 86,
         className: "visnov.sprites.SpriteBust",
         methodName: "moveTo",
         customParams: [this._moveWait],
@@ -1397,7 +1429,7 @@ SOFTWARE
         this._moveWait = -1;
         haxe_Log.trace("Disable Moving", {
           fileName: "src/visnov/sprites/SpriteBust.hx",
-          lineNumber: 135,
+          lineNumber: 147,
           className: "visnov.sprites.SpriteBust",
           methodName: "updateMovement",
         });
@@ -1411,7 +1443,7 @@ SOFTWARE
       this.move(xResult, yResult);
       haxe_Log.trace("Moving", {
         fileName: "src/visnov/sprites/SpriteBust.hx",
-        lineNumber: 148,
+        lineNumber: 160,
         className: "visnov.sprites.SpriteBust",
         methodName: "updateMovement",
         customParams: [this.x, this.y],

@@ -64,7 +64,8 @@ class Scene_Map extends RmScene_Map {
   public function addBustsToMessageWindow() {
     // Adds all necessary busts to the message window
     for (index in 0...Main.Params.bustLimit) {
-      var bust = new SpriteBust(0, 0); // add Optional bitmap later
+      // Offset Busts to sit above the message window
+      var bust = new SpriteBust(0, cast(this._messageWindow.height) * -1); // add Optional bitmap later
       setupBustEvents(bust);
       this._lvnBusts.push(bust);
       this._messageWindow.addChild(bust);

@@ -27,6 +27,8 @@ class Main {
     Params = {
       bustLimit: Fn.parseIntJs(params['bustLimit']),
       breathingAnim: untyped params['breathingAnim'].toLowerCase().trim() == 'true',
+      bustWidth: Fn.parseIntJs(params['bustWidth']),
+      bustHeight: Fn.parseIntJs(params['bustHeight']),
       msgWindowX: Fn.parseIntJs(params['msgWindowX']),
       msgWindowY: Fn.parseIntJs(params['msgWindowY']),
       msgWindowWidth: Fn.parseIntJs(params['msgWindowWidth']),
@@ -201,7 +203,9 @@ class Main {
     listener.emit(VNSysEvents.DARKENBUST, id);
   }
 
-  public static function setBust(id: Int, bustSetName: String) {}
+  public static function setBust(id: Int, bustSetName: String) {
+    listener.emit(VNSysEvents.SETBUST, id, bustSetName);
+  }
 
   public static function setBackdrop(imageName: String) {
     listener.emit(VNSysEvents.SETBACKDROP, imageName);

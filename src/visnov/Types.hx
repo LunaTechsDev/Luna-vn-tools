@@ -3,6 +3,8 @@ package visnov;
 typedef VNParams = {
   var bustLimit: Int;
   var breathingAnim: Bool;
+  var bustWidth: Int;
+  var bustHeight: Int;
   var msgWindowX: Float;
   var msgWindowY: Float;
   var msgWindowWidth: Float;
