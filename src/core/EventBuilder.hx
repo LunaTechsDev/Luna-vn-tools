@@ -345,8 +345,9 @@ class EventBuilder {
     this._commands.push({
       code: CHANGEPARALLAX,
       indent: this._currentIndentLvl,
-      parameters: [imageName, loopHorz, scrollHorz, loopVert, loopVert]
+      parameters: [imageName, loopHorz, loopVert, scrollHorz, scrollVert]
     });
+
     return this;
   }
 
