@@ -325,6 +325,31 @@ class EventBuilder {
     return this;
   }
 
+  public function changeTransparency(onOff: Bool) {
+    var value = switch (onOff) {
+      case true:
+        0;
+      case false:
+        1;
+    }
+    this._commands.push({
+      code: CHANGETRANSPARENCY,
+      indent: this._currentIndentLvl,
+      parameters: [value]
+    });
+    return this;
+  }
+
+  public function changeParallax(imageName: String, ?loopHorz: Bool = false, ?scrollHorz: Int = 0,
+      ?loopVert: Bool = false, ?scrollVert: Int = 0) {
+    this._commands.push({
+      code: CHANGEPARALLAX,
+      indent: this._currentIndentLvl,
+      parameters: [imageName, loopHorz, scrollHorz, loopVert, loopVert]
+    });
+    return this;
+  }
+
   public function changeName(actorId: Int, name: String) {
     this._commands.push({
       code: CHANGENAME,
