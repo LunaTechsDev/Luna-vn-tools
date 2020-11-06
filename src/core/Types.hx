@@ -77,6 +77,7 @@ enum abstract EventCode(Int) from Int to Int {
   public var BOARDVEHICLE = 206;
   public var SHOWBALLOON = 213;
   public var ERASEEVENT = 214;
+  public var CHANGEFOLLOWERS = 216;
   public var GATHERFOLLOWERS = 217;
   public var FADEOUTSCREEN = 221;
   public var FADEINSCREEN = 222;
@@ -110,9 +111,10 @@ enum abstract EventCode(Int) from Int to Int {
   public var CHANGEHP = 311;
   public var CHANGEMP = 312;
   public var CHANGESTATE = 313;
-  public var RECOVERALL = 313;
+  public var RECOVERALL = 314;
   public var CHANGEEXP = 315;
   public var CHANGELVL = 316;
+  public var CHANGENAME = 320;
   public var CHANGENICKNAME = 324;
   public var CHANGEPROFILE = 325;
   public var CHANGETP = 326;

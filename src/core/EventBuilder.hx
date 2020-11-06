@@ -8,6 +8,7 @@ using Lambda;
 
 // TODO: Combine Event Functionality
 @:native('EventBuilder')
+@:expose('EventBuilder')
 class EventBuilder {
   public var _commands: Array<EventCommand> = [];
   public var _metadata: Map<String, Dynamic> = new Map<String, Dynamic>();
@@ -144,6 +145,60 @@ class EventBuilder {
     return this;
   }
 
+  public function eraseEvent() {
+    this._commands.push({
+      code: ERASEEVENT,
+      indent: this._currentIndentLvl,
+      parameters: []
+    });
+    return this;
+  }
+
+  public function changePlayerFollowers(onOff: Bool) {
+    this._commands.push({
+      code: CHANGEFOLLOWERS,
+      indent: this._currentIndentLvl,
+      parameters: []
+    });
+    return this;
+  }
+
+  public function gatherFollowers() {
+    this._commands.push({
+      code: GATHERFOLLOWERS,
+      indent: this._currentIndentLvl,
+      parameters: []
+    });
+    return this;
+  }
+
+  public function fadeOutScreen() {
+    this._commands.push({
+      code: FADEOUTSCREEN,
+      indent: this._currentIndentLvl,
+      parameters: []
+    });
+    return this;
+  }
+
+  public function fadeInScreen() {
+    this._commands.push({
+      code: FADEINSCREEN,
+      indent: this._currentIndentLvl,
+      parameters: []
+    });
+    return this;
+  }
+
+  public function wait(frames: Int) {
+    this._commands.push({
+      code: WAIT,
+      indent: this._currentIndentLvl,
+      parameters: [frames]
+    });
+    return this;
+  }
+
   public function changeBattleBgm(name: String, volume: Int = 100, pitch: Int = 100, pan: Int = 0) {
     this._commands.push({
       code: CHANGEBATTLEBGM,
@@ -270,6 +325,15 @@ class EventBuilder {
     return this;
   }
 
+  public function changeName(actorId: Int, name: String) {
+    this._commands.push({
+      code: CHANGENAME,
+      indent: this._currentIndentLvl,
+      parameters: [actorId, name]
+    });
+    return this;
+  }
+
   public function changeNickname(actorId: Int, nickname: String) {
     this._commands.push({
       code: CHANGENICKNAME,
@@ -279,18 +343,39 @@ class EventBuilder {
     return this;
   }
 
-  public function eraseEvent() {
+  public function changeProfile(actorId: Int, profileText: String) {
     this._commands.push({
-      code: ERASEEVENT,
+      code: CHANGEPROFILE,
       indent: this._currentIndentLvl,
-      parameters: []
+      parameters: [actorId, profileText]
     });
     return this;
   }
 
-  public function gatherFollowers() {
+  /**
+   * Recovers the actor or actors hp/mp, etc.
+   * If Id > 0 it will recover a specific actor hp/mp.
+   * If Id < 0 it will recover all actors.
+   * @param partyActorId
+   */
+  public function recoverAll(partyActorId: Int = -1) {
     this._commands.push({
-      code: GATHERFOLLOWERS,
+      code: RECOVERALL,
+      indent: this._currentIndentLvl,
+      parameters: [partyActorId]
+    });
+    return this;
+  }
+
+  /**
+   * Recovers the enemy or enemies hp/mp, etc.
+   * If Id > 0 it will recover a specific enemies hp.
+   * If Id < 0 it will recover all enemies.
+   * @param troopEnemyId
+   */
+  public function enemyRecoverAll(troopEnemyId: Int = -1) {
+    this._commands.push({
+      code: ENEMYRECOVERALL,
       indent: this._currentIndentLvl,
       parameters: []
     });
