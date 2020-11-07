@@ -1,5 +1,6 @@
 package visnov.sprites;
 
+import pixi.core.math.Point;
 import rm.managers.ImageManager;
 import rm.core.Bitmap;
 import rm.sprites.Sprite_Base;
@@ -23,6 +24,7 @@ class SpriteBust extends Sprite {
 private var _shadowOpacity: Float;
 private var _shadowX: Float;
 private var _shadowY: Float;
+private var _shadowScale: Point;
 private var _fadeDuration: Int;
 private var _scaleDuration: Int;
 private var _defaultMoveType: MoveType;
@@ -72,9 +74,10 @@ override public function initialize(?bitmap: Bitmap): Void {
 #end
 
 this._fadeDuration = 0;
-this._shadowOpacity = this.alpha;
+this._shadowOpacity = this.opacity;
 this._shadowX = this.x;
 this._shadowY = this.y;
+this._shadowScale = this.scale;
 this._defaultMoveType = Linear;
 } // TODO: Replace with proper Some/None
 public function moveTo(x: Int, ?y: Int) {
@@ -125,7 +128,7 @@ public override function update() {
 }
 
 public function updateFade() {
-  VNExtensions.updateFade(this._shadowOpacity, this);
+  VNExtensions.updateFade(this._shadowOpacity, cast this);
 }
 
 public function updateScaling() {}
