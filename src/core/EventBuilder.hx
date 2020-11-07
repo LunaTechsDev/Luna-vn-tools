@@ -47,6 +47,7 @@ class EventBuilder {
       indent: this._currentIndentLvl,
       parameters: [startStop, seconds]
     });
+    return this;
   }
 
   public function nameInput(actorId: Int, characterLength: Int) {
@@ -473,8 +474,30 @@ class EventBuilder {
     return this;
   }
 
+  public function disableAll() {
+    this._commands.push({
+      code: DISABLEALL,
+      indent: this._currentIndentLvl,
+      parameters: []
+    });
+    return this;
+  }
+
+  public function enableAll() {
+    this._commands.push({
+      code: ENABLEALL,
+      indent: this._currentIndentLvl,
+      parameters: []
+    });
+    return this;
+  }
+
   public function commands() {
     return this._commands;
+  }
+
+  public function clear() {
+    this._commands = [];
   }
 
   public function metadata() {
