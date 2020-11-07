@@ -5,6 +5,7 @@ import rm.core.Bitmap;
 import rm.sprites.Sprite_Base;
 import rm.core.Sprite;
 import core.Amaryllis;
+import core.VNExtensions;
 
 enum MoveType {
   Linear;
@@ -123,7 +124,10 @@ public override function update() {
   }
 }
 
-public function updateFade() {}
+public function updateFade() {
+  VNExtensions.updateFade(this._shadowOpacity, this);
+}
+
 public function updateScaling() {}
 
 public function updateMovement() {
