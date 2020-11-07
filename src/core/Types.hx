@@ -30,6 +30,7 @@ enum abstract ChangeType(Int) from Int to Int {
 enum abstract EventCode(Int) from Int to Int {
   public var END = 0;
   public var SHOWTEXT = 101;
+  public var SHOWTEXTDATA = 401;
   public var SHOWCHOICE = 102;
   public var COMMENT = 108;
   public var COMMENTDATA = 408;
@@ -134,4 +135,6 @@ enum abstract EventCode(Int) from Int to Int {
   public var GAMEOVER = 353;
   public var TOTITLE = 354;
   public var SCRIPT = 355;
+  public var DISABLEALL = 681;
+  public var ENABLEALL = 682;
 }

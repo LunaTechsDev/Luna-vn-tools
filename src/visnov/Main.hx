@@ -1,5 +1,6 @@
 package visnov;
 
+import core.EventBuilder;
 import rm.core.JsonEx;
 import rm.managers.PluginManager;
 import utils.Fn;
@@ -12,6 +13,7 @@ import utils.Comment;
 import rm.Globals;
 import rm.scenes.Scene_Map as RmScene_Map;
 import rm.windows.Window_Message as RmWindow_Message;
+import rm.objects.Game_Interpreter as RmGame_Interpreter;
 
 using StringTools;
 
@@ -19,6 +21,7 @@ using StringTools;
 @:expose('LunaVN')
 class Main {
   public static var listener: EventEmitter = Amaryllis.createEventEmitter();
+  public static var EBuilder = core.EventBuilder;
   public static var Params: VNParams = null;
 
   public static function main() {
@@ -43,6 +46,10 @@ class Main {
 
     Comment.title('Window_Message');
     FnMacros.jsPatch(true, RmWindow_Message, Window_Message);
+
+    Comment.title('Game_Interpreter');
+    FnMacros.jsPatch(true, RmGame_Interpreter, GameInterpreter);
+
     registerAllPluginCommands(plugin.name);
   }
 

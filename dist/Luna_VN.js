@@ -2,7 +2,7 @@
  *
  *  Luna_VN.js
  * 
- *  Build Date: 11/5/2020
+ *  Build Date: 11/7/2020
  * 
  *  Made with LunaTea -- Haxe
  *
@@ -169,6 +169,18 @@ SOFTWARE
       }
       return x;
     }
+    static substr(s, pos, len) {
+      if (len == null) {
+        len = s.length;
+      } else if (len < 0) {
+        if (pos == 0) {
+          len = s.length + len;
+        } else {
+          return "";
+        }
+      }
+      return s.substr(pos, len);
+    }
     static now() {
       return Date.now();
     }
@@ -192,6 +204,29 @@ SOFTWARE
         return true;
       }
     }
+    static ltrim(s) {
+      let l = s.length;
+      let r = 0;
+      while (r < l && StringTools.isSpace(s, r)) ++r;
+      if (r > 0) {
+        return HxOverrides.substr(s, r, l - r);
+      } else {
+        return s;
+      }
+    }
+    static rtrim(s) {
+      let l = s.length;
+      let r = 0;
+      while (r < l && StringTools.isSpace(s, l - r - 1)) ++r;
+      if (r > 0) {
+        return HxOverrides.substr(s, 0, l - r);
+      } else {
+        return s;
+      }
+    }
+    static trim(s) {
+      return StringTools.ltrim(StringTools.rtrim(s));
+    }
     static replace(s, sub, by) {
       return s.split(sub).join(by);
     }
@@ -205,6 +240,532 @@ SOFTWARE
   }
 
   core_Amaryllis.__name__ = true;
+  class EventBuilder {
+    constructor() {
+      this._currentIndentLvl = 0;
+      this._metadata = new haxe_ds_StringMap();
+      this._commands = [];
+    }
+    showText(text, face, faceIndex, background, position) {
+      if (position == null) {
+        position = 2;
+      }
+      if (background == null) {
+        background = 0;
+      }
+      if (faceIndex == null) {
+        faceIndex = 0;
+      }
+      if (face == null) {
+        face = "";
+      }
+      this._commands.push({
+        code: 101,
+        indent: this._currentIndentLvl,
+        parameters: [face, faceIndex, background, position],
+      });
+      this._commands.push({
+        code: 401,
+        indent: this._currentIndentLvl,
+        parameters: [text],
+      });
+      this._commands.push({
+        code: 0,
+        indent: this._currentIndentLvl,
+        parameters: [],
+      });
+      return this;
+    }
+    controlTimer(startStop, seconds) {
+      this._commands.push({
+        code: 124,
+        indent: this._currentIndentLvl,
+        parameters: [startStop, seconds],
+      });
+    }
+    nameInput(actorId, characterLength) {
+      this._commands.push({
+        code: 303,
+        indent: this._currentIndentLvl,
+        parameters: [actorId, characterLength],
+      });
+      return this;
+    }
+    changeGoldDir(amount) {
+      return this.changeGold(0, amount);
+    }
+    changeGoldVar(variableId) {
+      return this.changeGold(1, variableId);
+    }
+    changeGold(changeType, amount) {
+      this._commands.push({
+        code: 125,
+        indent: this._currentIndentLvl,
+        parameters: [this.operationSign(amount), changeType, amount],
+      });
+      return this;
+    }
+    changeItemDir(itemId, amount) {
+      return this.changeItems(itemId, 0, amount);
+    }
+    changeItemVar(variableId, amount) {
+      return this.changeItems(variableId, 1, amount);
+    }
+    changeItems(itemVarId, changeType, amount) {
+      this._commands.push({
+        code: 126,
+        indent: this._currentIndentLvl,
+        parameters: [itemVarId, this.operationSign(amount), changeType, amount],
+      });
+      return this;
+    }
+    changeWepDir(itemId, amount, includeEqp) {
+      if (includeEqp == null) {
+        includeEqp = false;
+      }
+      return this.changeWep(itemId, 0, amount, includeEqp);
+    }
+    changeWepVar(variableId, amount, includeEqp) {
+      if (includeEqp == null) {
+        includeEqp = false;
+      }
+      return this.changeWep(variableId, 1, amount, includeEqp);
+    }
+    changeWep(itemVarId, changeType, amount, includeEqp) {
+      if (includeEqp == null) {
+        includeEqp = false;
+      }
+      this._commands.push({
+        code: 127,
+        indent: this._currentIndentLvl,
+        parameters: [
+          itemVarId,
+          this.operationSign(amount),
+          changeType,
+          amount,
+          includeEqp,
+        ],
+      });
+      return this;
+    }
+    changeArmorDir(itemId, amount, includeEqp) {
+      if (includeEqp == null) {
+        includeEqp = false;
+      }
+      return this.changeArmor(itemId, 0, amount, includeEqp);
+    }
+    changeArmorVar(variableId, amount, includeEqp) {
+      if (includeEqp == null) {
+        includeEqp = false;
+      }
+      return this.changeArmor(variableId, 1, amount, includeEqp);
+    }
+    changeArmor(itemVarId, changeType, amount, includeEqp) {
+      if (includeEqp == null) {
+        includeEqp = false;
+      }
+      this._commands.push({
+        code: 128,
+        indent: this._currentIndentLvl,
+        parameters: [
+          itemVarId,
+          this.operationSign(amount),
+          changeType,
+          amount,
+          includeEqp,
+        ],
+      });
+      return this;
+    }
+    addPartyMember(actorId) {
+      this.changePartyMember(actorId, 0);
+      return this;
+    }
+    removePartyMember(actorId) {
+      this.changePartyMember(actorId, 1);
+      return this;
+    }
+    changePartyMember(actorId, addRemove) {
+      this._commands.push({
+        code: 129,
+        indent: this._currentIndentLvl,
+        parameters: [actorId, addRemove],
+      });
+      return this;
+    }
+    changeWindowColor(red, green, blue, alpha) {
+      if (alpha == null) {
+        alpha = 1;
+      }
+      this._commands.push({
+        code: 138,
+        indent: this._currentIndentLvl,
+        parameters: [red, green, blue, alpha],
+      });
+      return this;
+    }
+    eraseEvent() {
+      this._commands.push({
+        code: 214,
+        indent: this._currentIndentLvl,
+        parameters: [],
+      });
+      return this;
+    }
+    changePlayerFollowers(onOff) {
+      this._commands.push({
+        code: 216,
+        indent: this._currentIndentLvl,
+        parameters: [],
+      });
+      return this;
+    }
+    gatherFollowers() {
+      this._commands.push({
+        code: 217,
+        indent: this._currentIndentLvl,
+        parameters: [],
+      });
+      return this;
+    }
+    fadeOutScreen() {
+      this._commands.push({
+        code: 221,
+        indent: this._currentIndentLvl,
+        parameters: [],
+      });
+      return this;
+    }
+    fadeInScreen() {
+      this._commands.push({
+        code: 222,
+        indent: this._currentIndentLvl,
+        parameters: [],
+      });
+      return this;
+    }
+    wait(frames) {
+      this._commands.push({
+        code: 230,
+        indent: this._currentIndentLvl,
+        parameters: [frames],
+      });
+      return this;
+    }
+    changeBattleBgm(name, volume, pitch, pan) {
+      if (pan == null) {
+        pan = 0;
+      }
+      if (pitch == null) {
+        pitch = 100;
+      }
+      if (volume == null) {
+        volume = 100;
+      }
+      this._commands.push({
+        code: 132,
+        indent: this._currentIndentLvl,
+        parameters: [name, volume, pitch, pan],
+      });
+      return this;
+    }
+    changeVictoryMe(name, volume, pitch, pan) {
+      if (pan == null) {
+        pan = 0;
+      }
+      if (pitch == null) {
+        pitch = 100;
+      }
+      if (volume == null) {
+        volume = 100;
+      }
+      this._commands.push({
+        code: 133,
+        indent: this._currentIndentLvl,
+        parameters: [name, volume, pitch, pan],
+      });
+      return this;
+    }
+    changeDefeatMe(name, volume, pitch, pan) {
+      if (pan == null) {
+        pan = 0;
+      }
+      if (pitch == null) {
+        pitch = 100;
+      }
+      if (volume == null) {
+        volume = 100;
+      }
+      this._commands.push({
+        code: 139,
+        indent: this._currentIndentLvl,
+        parameters: [name, volume, pitch, pan],
+      });
+      return this;
+    }
+    playBgm(name, volume, pitch, pan) {
+      if (pan == null) {
+        pan = 0;
+      }
+      if (pitch == null) {
+        pitch = 100;
+      }
+      if (volume == null) {
+        volume = 100;
+      }
+      this._commands.push({
+        code: 241,
+        indent: this._currentIndentLvl,
+        parameters: [name, volume, pitch, pan],
+      });
+      return this;
+    }
+    fadeOutBgm(frames) {
+      this._commands.push({
+        code: 242,
+        indent: this._currentIndentLvl,
+        parameters: [frames],
+      });
+      return this;
+    }
+    resumeBgm() {
+      this._commands.push({
+        code: 244,
+        indent: this._currentIndentLvl,
+        parameters: [],
+      });
+      return this;
+    }
+    saveBgm() {
+      this._commands.push({
+        code: 243,
+        indent: this._currentIndentLvl,
+        parameters: [],
+      });
+      return this;
+    }
+    playMe(name, volume, pitch, pan) {
+      if (pan == null) {
+        pan = 0;
+      }
+      if (pitch == null) {
+        pitch = 100;
+      }
+      if (volume == null) {
+        volume = 100;
+      }
+      this._commands.push({
+        code: 249,
+        indent: this._currentIndentLvl,
+        parameters: [name, volume, pitch, pan],
+      });
+      return this;
+    }
+    playSe(name, volume, pitch, pan) {
+      if (pan == null) {
+        pan = 0;
+      }
+      if (pitch == null) {
+        pitch = 100;
+      }
+      if (volume == null) {
+        volume = 100;
+      }
+      this._commands.push({
+        code: 250,
+        indent: this._currentIndentLvl,
+        parameters: [name, volume, pitch, pan],
+      });
+      return this;
+    }
+    stopSe() {
+      this._commands.push({
+        code: 251,
+        indent: this._currentIndentLvl,
+        parameters: [],
+      });
+      return this;
+    }
+    playMovie(name) {
+      this._commands.push({
+        code: 261,
+        indent: this._currentIndentLvl,
+        parameters: [name],
+      });
+      return this;
+    }
+    changeMapName(name) {
+      this._commands.push({
+        code: 281,
+        indent: this._currentIndentLvl,
+        parameters: [name],
+      });
+      return this;
+    }
+    changeTileset(tilesetId) {
+      this._commands.push({
+        code: 282,
+        indent: this._currentIndentLvl,
+        parameters: [tilesetId],
+      });
+      return this;
+    }
+    changeBattleBack(battleBack1, battleBack2) {
+      this._commands.push({
+        code: 283,
+        indent: this._currentIndentLvl,
+        parameters: [battleBack1, battleBack2],
+      });
+      return this;
+    }
+    changeTransparency(onOff) {
+      this._commands.push({
+        code: 211,
+        indent: this._currentIndentLvl,
+        parameters: [onOff ? 0 : 1],
+      });
+      return this;
+    }
+    changeParallax(imageName, loopHorz, scrollHorz, loopVert, scrollVert) {
+      if (scrollVert == null) {
+        scrollVert = 0;
+      }
+      if (loopVert == null) {
+        loopVert = false;
+      }
+      if (scrollHorz == null) {
+        scrollHorz = 0;
+      }
+      if (loopHorz == null) {
+        loopHorz = false;
+      }
+      this._commands.push({
+        code: 284,
+        indent: this._currentIndentLvl,
+        parameters: [imageName, loopHorz, loopVert, scrollHorz, scrollVert],
+      });
+      return this;
+    }
+    changeName(actorId, name) {
+      this._commands.push({
+        code: 320,
+        indent: this._currentIndentLvl,
+        parameters: [actorId, name],
+      });
+      return this;
+    }
+    changeNickname(actorId, nickname) {
+      this._commands.push({
+        code: 324,
+        indent: this._currentIndentLvl,
+        parameters: [actorId, nickname],
+      });
+      return this;
+    }
+    changeProfile(actorId, profileText) {
+      this._commands.push({
+        code: 325,
+        indent: this._currentIndentLvl,
+        parameters: [actorId, profileText],
+      });
+      return this;
+    }
+    recoverAll(partyActorId) {
+      if (partyActorId == null) {
+        partyActorId = -1;
+      }
+      this._commands.push({
+        code: 314,
+        indent: this._currentIndentLvl,
+        parameters: [partyActorId],
+      });
+      return this;
+    }
+    enemyRecoverAll(troopEnemyId) {
+      if (troopEnemyId == null) {
+        troopEnemyId = -1;
+      }
+      this._commands.push({
+        code: 334,
+        indent: this._currentIndentLvl,
+        parameters: [],
+      });
+      return this;
+    }
+    openSave() {
+      this._commands.push({
+        code: 352,
+        indent: this._currentIndentLvl,
+        parameters: [],
+      });
+      return this;
+    }
+    openMenu() {
+      this._commands.push({
+        code: 351,
+        indent: this._currentIndentLvl,
+        parameters: [],
+      });
+      return this;
+    }
+    gameOver() {
+      this._commands.push({
+        code: 353,
+        indent: this._currentIndentLvl,
+        parameters: [],
+      });
+    }
+    ToTitle() {
+      this._commands.push({
+        code: 354,
+        indent: this._currentIndentLvl,
+        parameters: [],
+      });
+      return this;
+    }
+    abortBattle() {
+      this._commands.push({
+        code: 340,
+        indent: this._currentIndentLvl,
+        parameters: [],
+      });
+      return this;
+    }
+    script(script, indent) {
+      this._commands.push({
+        code: 355,
+        indent: this._currentIndentLvl,
+        parameters: [StringTools.trim(script)],
+      });
+      return this;
+    }
+    commands() {
+      return this._commands;
+    }
+    metadata() {
+      return this._metadata;
+    }
+    addMetadata(key, value) {
+      this._metadata.h[key] = value;
+      return this;
+    }
+    getMetadata(key) {
+      return this._metadata.h[key];
+    }
+    operationSign(value) {
+      if (value > 0) {
+        return 0;
+      } else {
+        return 1;
+      }
+    }
+    static create() {
+      return new EventBuilder();
+    }
+  }
+
+  $hx_exports["EventBuilder"] = EventBuilder;
+  EventBuilder.__name__ = true;
   class haxe_Log {
     static formatOutput(v, infos) {
       let str = Std.string(v);
@@ -228,6 +789,13 @@ SOFTWARE
   }
 
   haxe_Log.__name__ = true;
+  class haxe_ds_StringMap {
+    constructor() {
+      this.h = Object.create(null);
+    }
+  }
+
+  haxe_ds_StringMap.__name__ = true;
   class haxe_iterators_ArrayIterator {
     constructor(array) {
       this.current = 0;
@@ -396,7 +964,7 @@ SOFTWARE
       };
       haxe_Log.trace(LunaVN.Params, {
         fileName: "src/visnov/Main.hx",
-        lineNumber: 40,
+        lineNumber: 43,
         className: "visnov.Main",
         methodName: "main",
       });
@@ -739,6 +1307,26 @@ SOFTWARE
       let _Window_Message_vnHide = Window_Message.prototype.vnHide;
       Window_Message.prototype.vnHide = function () {
         this.hide();
+      };
+
+      //=============================================================================
+      // Game_Interpreter
+      //=============================================================================
+      let _Game_Interpreter_command681 = Game_Interpreter.prototype.command681;
+      Game_Interpreter.prototype.command681 = function () {
+        $gameSystem.disableEncounter();
+        $gameSystem.disableFormation();
+        $gameSystem.disableMenu();
+        $gameSystem.disableSave();
+        return true;
+      };
+      let _Game_Interpreter_command682 = Game_Interpreter.prototype.command682;
+      Game_Interpreter.prototype.command682 = function () {
+        $gameSystem.enableEncounter();
+        $gameSystem.enableFormation();
+        $gameSystem.enableMenu();
+        $gameSystem.enableSave();
+        return true;
       };
       let pluginName = plugin.name;
       PluginManager.registerCommand(pluginName, "moveBustTo", function (
@@ -1370,7 +1958,7 @@ SOFTWARE
         );
         haxe_Log.trace("Loaded Sprite Bust", {
           fileName: "src/visnov/sprites/SpriteBust.hx",
-          lineNumber: 60,
+          lineNumber: 63,
           className: "visnov.sprites.SpriteBust",
           methodName: "handleLoading",
         });
@@ -1380,9 +1968,10 @@ SOFTWARE
     initialize(bitmap) {
       super.initialize(bitmap);
       this._fadeDuration = 0;
-      this._shadowOpacity = this.alpha;
+      this._shadowOpacity = this.opacity;
       this._shadowX = this.x;
       this._shadowY = this.y;
+      this._shadowScale = this.scale;
       this._defaultMoveType = visnov_sprites_MoveType.Linear;
     }
     moveTo(x, y) {
@@ -1393,7 +1982,7 @@ SOFTWARE
       this._moveWait = 30;
       haxe_Log.trace("Starting Move", {
         fileName: "src/visnov/sprites/SpriteBust.hx",
-        lineNumber: 86,
+        lineNumber: 90,
         className: "visnov.sprites.SpriteBust",
         methodName: "moveTo",
         customParams: [this._moveWait],
@@ -1438,7 +2027,22 @@ SOFTWARE
         this._moveWait--;
       }
     }
-    updateFade() {}
+    updateFade() {
+      let shadowOpacity = this._shadowOpacity;
+      let displayObj = this;
+      let opacityResult = displayObj.opacity;
+      if (shadowOpacity != displayObj.opacity) {
+        opacityResult = core_Amaryllis.lerp(
+          displayObj.opacity,
+          shadowOpacity,
+          0.045
+        );
+      }
+      if (Math.abs(shadowOpacity - displayObj.opacity) < 0.5) {
+        opacityResult = Math.round(opacityResult);
+      }
+      displayObj.opacity = opacityResult;
+    }
     updateScaling() {}
     updateMovement() {
       let xResult = this.x;
@@ -1453,7 +2057,7 @@ SOFTWARE
         this._moveWait = -1;
         haxe_Log.trace("Disable Moving", {
           fileName: "src/visnov/sprites/SpriteBust.hx",
-          lineNumber: 147,
+          lineNumber: 154,
           className: "visnov.sprites.SpriteBust",
           methodName: "updateMovement",
         });
@@ -1467,7 +2071,7 @@ SOFTWARE
       this.move(xResult, yResult);
       haxe_Log.trace("Moving", {
         fileName: "src/visnov/sprites/SpriteBust.hx",
-        lineNumber: 160,
+        lineNumber: 167,
         className: "visnov.sprites.SpriteBust",
         methodName: "updateMovement",
         customParams: [this.x, this.y],
@@ -1495,6 +2099,7 @@ SOFTWARE
   Date.__name__ = "Date";
   js_Boot.__toStr = {}.toString;
   LunaVN.listener = new PIXI.utils.EventEmitter();
+  LunaVN.EBuilder = EventBuilder;
   LunaVN.main();
 })(
   typeof exports != "undefined"

@@ -20,14 +20,24 @@ class EventBuilder {
     return new EventBuilder();
   }
 
-  public function showText(text: String, background: WinBackground = OPAQUE, position: WinPosition = BOTTOM) {
-    var params: Array<Any> = [text, background, position];
+  public function showText(text: String, ?face: String = '', faceIndex: Int = 0, background: WinBackground = OPAQUE,
+      position: WinPosition = BOTTOM) {
+    var params: Array<Any> = [face, faceIndex, background, position];
     this._commands.push({
       code: SHOWTEXT,
       indent: this._currentIndentLvl,
       parameters: params
     });
-
+    this._commands.push({
+      code: SHOWTEXTDATA,
+      indent: this._currentIndentLvl,
+      parameters: [text]
+    });
+    this._commands.push({
+      code: END,
+      indent: this._currentIndentLvl,
+      parameters: []
+    });
     return this;
   }
 
