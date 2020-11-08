@@ -1,5 +1,6 @@
 package core;
 
+import core.VNExtensions.OpacityObject;
 import core.Types;
 import rm.types.RPG.EventCommand;
 
@@ -18,6 +19,27 @@ class EventBuilder {
 
   public static function create() {
     return new EventBuilder();
+  }
+
+  public function showTextFaceTop(text: String, face: String, faceIndex: Int, background: WinBackground = OPAQUE) {
+    return this.showTextFace(text, face, faceIndex, background, TOP);
+  }
+
+  public function showTextFaceMid(text: String, face: String, faceIndex: Int, background: WinBackground = OPAQUE) {
+    return this.showTextFace(text, face, faceIndex, background, MIDDLE);
+  }
+
+  public function showTextFace(text: String, face: String, faceIndex: Int, background: WinBackground = OPAQUE,
+      position: WinPosition = BOTTOM) {
+    return this.showText(text, face, faceIndex, background, position);
+  }
+
+  public function showTextTop(text: String, background: WinBackground = OPAQUE) {
+    return this.showText(text, null, null, background, TOP);
+  }
+
+  public function showTextMid(text: String, background: WinBackground = OPAQUE) {
+    return this.showText(text, null, null, background, MIDDLE);
   }
 
   public function showText(text: String, ?face: String = '', faceIndex: Int = 0, background: WinBackground = OPAQUE,
